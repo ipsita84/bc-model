@@ -1,5 +1,5 @@
 // vim: set cin ts=4 sw=4 tw=80:
-// g++ -Wall -O3 E-vs-beta.cc -o testo
+// g++ -Wall -O3 Ereplica-vs-beta.cc -o testo
 // Run with command line arguments, e.g. ./testo betamin betamax delbeta
 // Considering 2d Blume Capel model
 //warming up system for first N_mc/10 loops
@@ -20,7 +20,8 @@
 // gen is a variable name
 // Its data-type is boost::random::mt19937
 boost::random::mt19937 gen;
-// boost::random::mt19937 gen(std::time(0)); // time(0) changes seed every time you run
+// boost::random::mt19937 gen(std::time(0)); 
+// time(0) changes seed every time you run
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
 using namespace std;
@@ -81,31 +82,39 @@ int main(int argc, char const * argv[])
 	axis2 = axis1;
 
 	string axis_str = lexical_cast<string>(axis1);
-	ofstream fout(string("E" + axis_str + ".dat").c_str());	// Opens a file for output
-	ofstream gout(string("EA" + axis_str + ".dat").c_str());
+	ofstream fout(string("Em" + axis_str + ".dat").c_str());	
+// Opens a file for output
+	
 
-//      Create a 2d array that is axis1 * axis2
-	array_2d sitespin(boost::extents[axis1][axis2]);
-//      stores the spin configuration of the system
+	//define replica 1 spin configuration array
+	array_2d sitespin1(boost::extents[axis1][axis2]);
+	//define replica 2 spin configuration array
+	array_2d sitespin2(boost::extents[axis1][axis2]);
 
-	array_2d sitespinsum(boost::extents[axis1][axis2]);
-
-
-//      initial state chosen by random no. generator above
+	//For subsystem A,both replicas have same spin configuration
 	for (unsigned int i = 0; i < axis1; ++i)
 		for (unsigned int j = 0; j < axis2; ++j)
-			sitespin[i][j] = roll_coin(-1, 1);
+		{
+			sitespin1[i][j] = 2 * roll_coin(0, 1) - 1;
+			sitespin2[i][j] = sitespin1[i][j];
+		}
 
-	double energy = energy_tot(sitespin);
-	
+
+	double energy = 2*energy_tot(sitespin1);
+
+	//calculate avg energy for replica spin config at temp 1/beta
+	//logic: for a[n1][n2], a[n1] is n1 copies of 1d array of length n2
+
 	fout << 0 << '\t' << 0 << endl;
-	gout << 0 << '\t' << 0 << endl;
 
 
 	for (double beta =beta_min+del_beta;beta<beta_max+del_beta;beta += del_beta)
 	{
-		double en_sum(0), EA(0);
 		unsigned int sys_size = axis1 * axis2;
+		unsigned int row, col, label;
+		double r(0), acc_ratio(0) ;
+	
+		double en_sum(0);
 		int spin(0),newspin(0),choice[2]={0,0},choice_ind;
 
 		for (unsigned int k = 0; k < axis1; ++k)
@@ -114,13 +123,29 @@ int main(int argc, char const * argv[])
 
 		for (unsigned int i = 1; i <=1e5+N_mc; ++i)
 		{
-			for (unsigned int j = 1; j <= sys_size; ++j)
+			for (unsigned int j = 1; j <=3*sys_size/2; ++j)
 			{
 				
-//				Now choose a random spin site with site no.=label
-				unsigned int label, row, col ;
-				label = roll_coin(1, sys_size);
+			//Choose a random spin site for the entire 2 replica system
+			double energy_diff(0);
+			label = roll_coin(1,2*sys_size);
 
+
+				//Generate a random no. r such that 0 < r < 1
+				double r = random_real(0, 1);
+				double acc_ratio = exp(-1.0 * energy_diff* beta);
+
+				//Spin flipped if r <= acceptance ratio
+				if (r <= acc_ratio)
+				{
+					energy += energy_diff;
+				}
+				else sitespin[row][col]=spin;
+			}
+
+			//if the random spin site is located in layer 1
+			if (label <= sys_size)
+			{
 				if (label % axis2 == 0)
 				{
 					row = (label / axis2) - 1;
@@ -132,7 +157,7 @@ int main(int argc, char const * argv[])
 					row = (label-col-1)/axis2;
 				}
 
-			spin = sitespin[row][col];
+            spin = sitespin1[row][col];
 			if (spin==0) 
 			{	choice[0]=-1;
 				choice[1]=1;
@@ -149,46 +174,100 @@ int main(int argc, char const * argv[])
 			choice_ind = roll_coin(0,1);
 			newspin = choice[choice_ind];
  
-				double energy_diff =-nn_energy(sitespin,row,col);
+				energy_diff =-nn_energy(sitespin1,row,col);
 				energy_diff -=D*spin*spin;
-				sitespin[row][col]=newspin;
-				energy_diff +=nn_energy(sitespin,row,col);
+				sitespin1[row][col]=newspin;
+				energy_diff +=nn_energy(sitespin1,row,col);
 				energy_diff +=D*newspin*newspin;
 
 
+				if (row < axis1/2)
+				  energy_diff *=2.0;
+
 				//Generate a random no. r such that 0 < r < 1
-				double r = random_real(0, 1);
-				double acc_ratio = exp(-1.0 * energy_diff* beta);
+				r = random_real(0, 1);
+				acc_ratio = exp(-1.0 * energy_diff *beta);
 
 				//Spin flipped if r <= acceptance ratio
 				if (r <= acc_ratio)
 				{
-					energy += energy_diff;
+						if (row < axis1/2)
+						sitespin2[row][col] *=newspin;
+						energy += energy_diff;
 				}
-				else sitespin[row][col]=spin;
+				else sitespin1[row][col] *=spin;
 			}
 
-			if (i > 1e5) 
-			{	en_sum += energy;
-				for (unsigned int k = 0; k < axis1; ++k)
-					for (unsigned int l = 0; l < axis2; ++l)
-					sitespinsum[k][l] += sitespin[k][l] ;
+			//if the random spin site is located in layer 2
+			if (label > sys_size)
+			{
+				label -= sys_size;
+
+				if (label % axis2 == 0)
+				{
+					row = (label / axis2) - 1;
+					col = axis2 -1 ;
+				}
+				else
+				{
+					col = label % axis2 - 1;
+					row = (label-col-1)/axis2;
+				}
+
+            spin = sitespin2[row][col];
+			if (spin==0) 
+			{	choice[0]=-1;
+				choice[1]=1;
+			}
+			if (spin==-1) 
+			{	choice[0]=0;
+				choice[1]=1;
+			}
+			if (spin==1) 
+			{	choice[0]=-1;
+				choice[1]=0;
+			}
+
+			choice_ind = roll_coin(0,1);
+			newspin = choice[choice_ind];
+ 
+				energy_diff =-nn_energy(sitespin2,row,col);
+				energy_diff -=D*spin*spin;
+				sitespin2[row][col]=newspin;
+				energy_diff +=nn_energy(sitespin2,row,col);
+				energy_diff +=D*newspin*newspin;
+
+
+				if (row < axis1/2)
+				  energy_diff *=2.0;
+
+
+				//Generate a random no. r such that 0 < r < 1
+				r = random_real(0, 1);
+				acc_ratio = exp(-1.0 * energy_diff *beta);
+
+				//Spin flipped if r <= acceptance ratio
+				if (r <= acc_ratio)
+				{
+					if (row < axis1/2)
+						sitespin1[row][col] *=newspin;
+
+					energy += energy_diff;
+				}
+				else sitespin2[row][col] *=newspin;
 			}
 		}
 
-		fout << beta << '\t' << en_sum / N_mc << endl;
+		if (i> 1e5) en_sum += energy;
+	}
 
-		for (unsigned int i = 0; i < axis1; ++i)
-			for (unsigned int j = 0; j < axis2; ++j)
-			EA += sitespinsum[i][j]*sitespinsum[i][j] / (N_mc*N_mc);
-//prints Edwards-Anderson order parameter for each beta value
-		gout << beta << '\t' << EA / sys_size << endl;
+	fout << beta << '\t' << en_sum / N_mc << endl;
 	}
 
 	fout.close();
-	gout.close();
 	return 0;
 }
+
 
 
 //function to generate random integer
