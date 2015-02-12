@@ -81,7 +81,8 @@ int main(int argc, char const * argv[])
 	axis2 = axis1;
 
 	string axis_str = lexical_cast<string>(axis1);
-	ofstream fout(string("E" + axis_str + ".dat").c_str());	// Opens a file for output
+	ofstream fout(string("E" + axis_str + ".dat").c_str());	
+// Opens a file for output
 	ofstream gout(string("EA" + axis_str + ".dat").c_str());
 
 //      Create a 2d array that is axis1 * axis2
@@ -97,12 +98,9 @@ int main(int argc, char const * argv[])
 			sitespin[i][j] = roll_coin(-1, 1);
 
 	double energy = energy_tot(sitespin);
-	
-	fout << 0 << '\t' << 0 << endl;
-	gout << 0 << '\t' << 0 << endl;
 
 
-	for (double beta =beta_min+del_beta;beta<beta_max+del_beta;beta += del_beta)
+	for (double beta =beta_min ;beta<beta_max+del_beta;beta += del_beta)
 	{
 		double en_sum(0), EA(0);
 		unsigned int sys_size = axis1 * axis2;
@@ -298,4 +296,3 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 	return nn_en;
 }
 
-//  g++ -Wall -O3 ising-2d-T-dep.cc -o testo

@@ -105,10 +105,8 @@ int main(int argc, char const * argv[])
 	//calculate avg energy for replica spin config at temp 1/beta
 	//logic: for a[n1][n2], a[n1] is n1 copies of 1d array of length n2
 
-	fout << 0 << '\t' << 0 << endl;
 
-
-	for (double beta =beta_min+del_beta;beta<beta_max+del_beta;beta += del_beta)
+	for (double beta =beta_min;beta<beta_max+del_beta;beta += del_beta)
 	{
 		unsigned int sys_size = axis1 * axis2;
 		unsigned int row, col, label;
@@ -200,18 +198,18 @@ int main(int argc, char const * argv[])
 				}
 
         		spin = sitespin2[row][col];
-					if (spin==0) 
-				{	choice[0]=-1;
-					choice[1]=1;
-				}
-				if (spin==-1) 
-				{	choice[0]=0;
-					choice[1]=1;
-				}
-				if (spin==1) 
-				{	choice[0]=-1;
-				choice[1]=0;
-				}
+				 if (spin==0) 
+					{	choice[0]=-1;
+						choice[1]=1;
+					}
+				 if (spin==-1) 
+					{	choice[0]=0;
+						choice[1]=1;
+					}
+				 if (spin==1) 
+					{	choice[0]=-1;
+						choice[1]=0;
+					}
 
 				choice_ind = roll_coin(0,1);
 				newspin = choice[choice_ind];
@@ -362,4 +360,3 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 	return nn_en;
 }
 
-//  g++ -Wall -O3 ising-2d-T-dep.cc -o testo
