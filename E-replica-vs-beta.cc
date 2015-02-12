@@ -117,9 +117,6 @@ int main(int argc, char const * argv[])
 		double en_sum(0);
 		int spin(0),newspin(0),choice[2]={0,0},choice_ind;
 
-		for (unsigned int k = 0; k < axis1; ++k)
-			for (unsigned int l = 0; l < axis2; ++l)
-			sitespinsum[k][l] = 0;
 
 		for (unsigned int i = 1; i <=1e5+N_mc; ++i)
 		{
@@ -130,18 +127,6 @@ int main(int argc, char const * argv[])
 			double energy_diff(0);
 			label = roll_coin(1,2*sys_size);
 
-
-				//Generate a random no. r such that 0 < r < 1
-				double r = random_real(0, 1);
-				double acc_ratio = exp(-1.0 * energy_diff* beta);
-
-				//Spin flipped if r <= acceptance ratio
-				if (r <= acc_ratio)
-				{
-					energy += energy_diff;
-				}
-				else sitespin[row][col]=spin;
-			}
 
 			//if the random spin site is located in layer 1
 			if (label <= sys_size)
@@ -157,22 +142,22 @@ int main(int argc, char const * argv[])
 					row = (label-col-1)/axis2;
 				}
 
-            spin = sitespin1[row][col];
-			if (spin==0) 
-			{	choice[0]=-1;
-				choice[1]=1;
-			}
-			if (spin==-1) 
-			{	choice[0]=0;
-				choice[1]=1;
-			}
-			if (spin==1) 
-			{	choice[0]=-1;
-				choice[1]=0;
-			}
+        		spin = sitespin1[row][col];
+				if (spin==0) 
+				{	choice[0]=-1;
+					choice[1]=1;
+				}
+				if (spin==-1) 
+				{	choice[0]=0;
+					choice[1]=1;
+				}
+				if (spin==1) 
+				{	choice[0]=-1;
+					choice[1]=0;
+				}
 
-			choice_ind = roll_coin(0,1);
-			newspin = choice[choice_ind];
+				choice_ind = roll_coin(0,1);
+				newspin = choice[choice_ind];
  
 				energy_diff =-nn_energy(sitespin1,row,col);
 				energy_diff -=D*spin*spin;
@@ -214,22 +199,22 @@ int main(int argc, char const * argv[])
 					row = (label-col-1)/axis2;
 				}
 
-            spin = sitespin2[row][col];
-			if (spin==0) 
-			{	choice[0]=-1;
-				choice[1]=1;
-			}
-			if (spin==-1) 
-			{	choice[0]=0;
-				choice[1]=1;
-			}
-			if (spin==1) 
-			{	choice[0]=-1;
+        		spin = sitespin2[row][col];
+					if (spin==0) 
+				{	choice[0]=-1;
+					choice[1]=1;
+				}
+				if (spin==-1) 
+				{	choice[0]=0;
+					choice[1]=1;
+				}
+				if (spin==1) 
+				{	choice[0]=-1;
 				choice[1]=0;
-			}
+				}
 
-			choice_ind = roll_coin(0,1);
-			newspin = choice[choice_ind];
+				choice_ind = roll_coin(0,1);
+				newspin = choice[choice_ind];
  
 				energy_diff =-nn_energy(sitespin2,row,col);
 				energy_diff -=D*spin*spin;
