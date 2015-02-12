@@ -93,14 +93,15 @@ int main(int argc, char const * argv[])
 
 	//For subsystem A,both replicas have same spin configuration
 	for (unsigned int i = 0; i < axis1; ++i)
-		for (unsigned int j = 0; j < axis2; ++j)
-		{
+		{   for (unsigned int j = 0; j < axis2; ++j)
+			{
 			sitespin1[i][j] = roll_coin(-1, 1);
 			sitespin2[i][j] = sitespin1[i][j];
+			}
 		}
 
 
-	double energy = 2*energy_tot(sitespin1);
+	double energy =2.0*energy_tot(sitespin1);
 
 	//calculate avg energy for replica spin config at temp 1/beta
 	//logic: for a[n1][n2], a[n1] is n1 copies of 1d array of length n2
@@ -165,7 +166,12 @@ int main(int argc, char const * argv[])
 
 
 				if (row < axis1/2)
-				  energy_diff *=2.0;
+				  { energy_diff -=nn_energy(sitespin2,row,col);
+					energy_diff -=D*spin*spin;
+					sitespin2[row][col]=newspin;
+					energy_diff +=nn_energy(sitespin2,row,col);
+					energy_diff +=D*newspin*newspin;
+			      }
 
 				//Generate a random no. r such that 0 < r < 1
 				r = random_real(0, 1);
@@ -174,11 +180,14 @@ int main(int argc, char const * argv[])
 				//Spin flipped if r <= acceptance ratio
 				if (r <= acc_ratio)
 				{
-						if (row < axis1/2)
-						sitespin2[row][col]=newspin;
+
 						energy += energy_diff;
 				}
-				else sitespin1[row][col] =spin;
+				else 
+				{   sitespin1[row][col] =spin;
+					if (row < axis1/2)
+						sitespin2[row][col]=spin;
+				}
 			}
 
 			//if the random spin site is located in layer 2
@@ -222,7 +231,12 @@ int main(int argc, char const * argv[])
 
 
 				if (row < axis1/2)
-				  energy_diff *=2.0;
+				  { energy_diff -=nn_energy(sitespin1,row,col);
+					energy_diff -=D*spin*spin;
+					sitespin1[row][col]=newspin;
+					energy_diff +=nn_energy(sitespin1,row,col);
+					energy_diff +=D*newspin*newspin;
+			      }
 
 
 				//Generate a random no. r such that 0 < r < 1
@@ -232,12 +246,14 @@ int main(int argc, char const * argv[])
 				//Spin flipped if r <= acceptance ratio
 				if (r <= acc_ratio)
 				{
-					if (row < axis1/2)
-						sitespin1[row][col]=newspin;
 
-					energy += energy_diff;
+						energy += energy_diff;
 				}
-				else sitespin2[row][col]=spin;
+				else 
+				{   sitespin2[row][col] =spin;
+					if (row < axis1/2)
+						sitespin1[row][col]=spin;
+				}
 			}
 		}
 
