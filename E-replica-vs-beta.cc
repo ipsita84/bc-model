@@ -95,7 +95,7 @@ int main(int argc, char const * argv[])
 	for (unsigned int i = 0; i < axis1; ++i)
 		for (unsigned int j = 0; j < axis2; ++j)
 		{
-			sitespin1[i][j] = 2 * roll_coin(0, 1) - 1;
+			sitespin1[i][j] = roll_coin(-1, 1);
 			sitespin2[i][j] = sitespin1[i][j];
 		}
 
@@ -177,10 +177,10 @@ int main(int argc, char const * argv[])
 				if (r <= acc_ratio)
 				{
 						if (row < axis1/2)
-						sitespin2[row][col] *=newspin;
+						sitespin2[row][col]=newspin;
 						energy += energy_diff;
 				}
-				else sitespin1[row][col] *=spin;
+				else sitespin1[row][col] =spin;
 			}
 
 			//if the random spin site is located in layer 2
@@ -235,11 +235,11 @@ int main(int argc, char const * argv[])
 				if (r <= acc_ratio)
 				{
 					if (row < axis1/2)
-						sitespin1[row][col] *=newspin;
+						sitespin1[row][col]=newspin;
 
 					energy += energy_diff;
 				}
-				else sitespin2[row][col] *=newspin;
+				else sitespin2[row][col]=spin;
 			}
 		}
 
