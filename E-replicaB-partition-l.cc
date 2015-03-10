@@ -1,5 +1,5 @@
 // vim: set cin ts=4 sw=4 tw=80:
-// g++ -Wall -O3 Ereplica-vs-beta.cc -o testo
+// g++ -Wall -O3 E-replicaB-partition-l.cc -o replicaB
 // Run with command line arguments, e.g. ./testo betamin betamax delbeta
 // Considering 2d Blume Capel model
 //warming up system for first N_mc/10 loops
@@ -61,6 +61,7 @@ int main(int argc, char const * argv[])
 	}	
 
 	double beta_min(0), beta_max(0), del_beta(0);
+	unsigned int ell(0);
 
 	try
 	{

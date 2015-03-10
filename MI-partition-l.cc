@@ -1,4 +1,4 @@
-// g++ -Wall -O3 `pkg-config --cflags --libs gsl tabdatrw interp2dpp` Mutual-info-vs-beta.cc -o mi
+// g++ -Wall -O3 `pkg-config --cflags --libs gsl tabdatrw interp2dpp` MI-partition-l.cc -o mi
 // 2nd Renyi entropy for classical 2d Ising model in zero magnetic field
 //Metropolis algorithm employed
 //Parameters that can be changed for different runs:
@@ -55,18 +55,18 @@ int main(int argc, char const * argv[])
 
 	if (argc != 5)
 	{
-		cout << "Expecting four inputs: beta_min, beta_max, del_beta, axis1."
+		cout << "Expecting four inputs: beta_min, beta_max, axis1, ell."
 		     << endl << "Got " << argc - 1 << endl;
 		return 1;
 	}	
 
 	double beta_min(0), beta_max(0), del_beta(0);
+	unsigned int ell(0);
 
 	try
 	{
 		beta_min = lexical_cast<double>(argv[1]);
 		beta_max = lexical_cast<double>(argv[2]);
-		del_beta = lexical_cast<double>(argv[3]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
@@ -75,7 +75,8 @@ int main(int argc, char const * argv[])
 	}
 	try
 	{
-		axis1 = lexical_cast<unsigned int>(argv[4]);
+		axis1 = lexical_cast<unsigned int>(argv[3]);
+		ell = lexical_cast<unsigned int>(argv[4]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
@@ -86,16 +87,18 @@ int main(int argc, char const * argv[])
 	axis2 = axis1;
 
 	string axis_str = lexical_cast<string>(axis1);
-	ofstream fout(string("I2" + axis_str + ".dat").c_str());// Opens a file for output
+	string ell_str = lexical_cast<string>(ell);
+	ofstream fout(string("I2" + axis_str+ "p" + ell_str + ".dat").c_str());// Opens a file for output
 	
 	double mut_info(0); //mutual information I_2
 
-	vvdouble vmA = tabdatr(string("Em" + axis_str + ".dat").c_str(), 2);
+	vvdouble vmA = tabdatr(string("EmA" + axis_str+ "p" + ell_str + ".dat").c_str(), 2);
 //modified energy data for replica A
 	interp_data idmA(vmA,1);
 
-//	vvdouble vmB = tabdatr("EmB.dat", 2);//modified energy data for B
-//	interp_data idmB(vmB,1);
+	vvdouble vmB = tabdatr(string("EmB" + axis_str+ "p" + ell_str + ".dat").c_str(), 2);
+	//modified energy data for B
+	interp_data idmB(vmB,1);
 
 	vvdouble vn = tabdatr(string("E" + axis_str + ".dat").c_str(), 2);
 //normal energy data
@@ -109,7 +112,7 @@ int main(int argc, char const * argv[])
 	for (double beta = beta_min; beta < beta_max + del_beta; beta += del_beta)
 	{
 		mut_info = 0 ;
-		double int_E_T(0), int_E_Tby2(0),int_EA_T(0),abs_error(0);
+		double int_E_T(0), int_E_Tby2(0),int_EA_T(0),int_EB_T(0),abs_error(0);
 		gsl_function F;
 		F.function = &f;
 		F.params = &idn;
@@ -124,15 +127,16 @@ int main(int argc, char const * argv[])
 		gsl_integration_cquad (&F, 0, beta, 1e-6, 1e-4, w, &int_EA_T,
 		                       &abs_error, &nevals);
 
-//		F.function = &h;
-//		F.params = &idmB;
-//		gsl_integration_cquad (&F, 0, beta, 1e-6, 1e-4, w, &int_EB_T,
-//		                       &abs_error, &nevals);
+		F.function = &h;
+		F.params = &idmB;
+		gsl_integration_cquad (&F, 0, beta, 1e-6, 1e-4, w, &int_EB_T,
+		                       &abs_error, &nevals);
 // I2 =-2\int_0^{\beta} E - \int_0^{2 \beta} E 
 //   + \int_0^{\beta} E_replica_A + \int_0^{\beta} E_replica_B
 
-                mut_info = 2.0*int_EA_T-2.0*int_E_T - int_E_Tby2;
-		fout << beta << '\t' << mut_info /axis2 << endl;
+                mut_info = int_EA_T + int_EB_T -2.0*int_E_T - int_E_Tby2;
+		fout << beta << '\t' << mut_info << endl;
+		// I_2 for partition ell; NOT I_2 / ell
 	}
 
 	fout.close();
