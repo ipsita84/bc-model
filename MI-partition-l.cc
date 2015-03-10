@@ -60,7 +60,7 @@ int main(int argc, char const * argv[])
 		return 1;
 	}	
 
-	double beta_min(0), beta_max(0), del_beta(0);
+	double beta_min(0), beta_max(0);
 	unsigned int ell(0);
 
 	try
