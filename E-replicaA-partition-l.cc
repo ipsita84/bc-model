@@ -121,11 +121,13 @@ int main(int argc, char const * argv[])
 	
 		double en_sum(0);
 		int spin(0),newspin(0),choice[2]={0,0},choice_ind;
+		unsigned int eff_sys_size = 2*sys_size - ell * axis2 ;
+		// effective system size for replica A
 
 
 		for (unsigned int i = 1; i <=1e5+N_mc; ++i)
 		{
-			for (unsigned int j = 1; j <=3*sys_size/2; ++j)
+			for (unsigned int j = 1; j <=eff_sys_size; ++j)
 			{
 				
 			//Choose a random spin site for the entire 2 replica system
@@ -191,7 +193,7 @@ int main(int argc, char const * argv[])
 				}
 				else 
 				{   sitespin1[row][col] =spin;
-					if (row < axis1/2)
+					if (row < ell)
 						sitespin2[row][col]=spin;
 				}
 			}
@@ -257,7 +259,7 @@ int main(int argc, char const * argv[])
 				}
 				else 
 				{   sitespin2[row][col] =spin;
-					if (row < axis1/2)
+					if (row < ell)
 						sitespin1[row][col]=spin;
 				}
 			}

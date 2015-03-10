@@ -14,7 +14,7 @@
 // = 2 ln(Z[T])+ln(Z[T/2])-ln(Z[A,2,T])-ln(Z[B,2,T])
 // =-2\int_0^{\beta} E - \int_0^{2 \beta} E 
 //   + \int_0^{\beta} E_replica_A + \int_0^{\beta} E_replica_B
-//here S_2 (A) = S_2 (B) as the cut is symmetric and there is no disorder
+
 
 
 #include <iostream>
