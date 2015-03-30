@@ -1,5 +1,5 @@
 // vim: set cin ts=4 sw=4 tw=100:
-// g++ -Wall -O3 E-replicaA-l-print-spin.cc -o replicaA
+// g++ -Wall -O3 E-replicaB-l-print-spin.cc -o replicaB
 // Run with command line arguments, e.g. ./testo betamin betamax delbeta
 // Considering 2d Blume Capel model
 //warming up system for first N_mc/10 loops
@@ -54,8 +54,8 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
 
 
 
+///////////////////////////////////////////////////////////////////////////////s
 
-/////////////////////////////////////////////////////////////////////
 
 int main(int argc, char const * argv[])
 {
@@ -94,7 +94,7 @@ int main(int argc, char const * argv[])
 
 	string axis_str = lexical_cast<string>(axis1);
 	string ell_str = lexical_cast<string>(ell);
-	ofstream fout(string("EmA" + axis_str + "p" + ell_str + ".dat").c_str(),ios_base::app);		
+	ofstream fout(string("EmB" + axis_str + "p" + ell_str + ".dat").c_str(),ios_base::app);	
 // Opens a file for output
 	
 
@@ -121,7 +121,7 @@ int main(int argc, char const * argv[])
 
 
    if (beta_min!=0)
-	{ 	ifstream hin(string("spinA-" + axis_str+ "-" + ell_str + ".dat").c_str());
+	{ 	ifstream hin(string("spinB-" + axis_str+ "-" + ell_str + ".dat").c_str());
 		hin>> beta_stored;
 		if (beta_min != beta_stored)
 	    {
@@ -154,8 +154,8 @@ int main(int argc, char const * argv[])
 	
 		double en_sum(0);
 		int spin(0),newspin(0),choice[2]={0,0},choice_ind;
-		unsigned int eff_sys_size = 2*sys_size - ell * axis2 ;
-		// effective system size for replica A
+		unsigned int eff_sys_size = sys_size + ell * axis2 ;
+		// effective system size for replica B
 
 
 		for (unsigned int i = 1; i <=1e5+N_mc; ++i)
@@ -206,7 +206,7 @@ int main(int argc, char const * argv[])
 				energy_diff +=D*newspin*newspin;
 
 
-				if (row < ell)
+				if (row >= ell)
 				  { energy_diff -=nn_energy(sitespin2,row,col);
 					energy_diff -=D*spin*spin;
 					sitespin2[row][col]=newspin;
@@ -226,7 +226,7 @@ int main(int argc, char const * argv[])
 				}
 				else 
 				{   sitespin1[row][col] =spin;
-					if (row < ell)
+					if (row >= ell)
 						sitespin2[row][col]=spin;
 				}
 			}
@@ -271,7 +271,7 @@ int main(int argc, char const * argv[])
 				energy_diff +=D*newspin*newspin;
 
 
-				if (row < ell)
+				if (row >= ell)
 				  { energy_diff -=nn_energy(sitespin1,row,col);
 					energy_diff -=D*spin*spin;
 					sitespin1[row][col]=newspin;
@@ -292,7 +292,7 @@ int main(int argc, char const * argv[])
 				}
 				else 
 				{   sitespin2[row][col] =spin;
-					if (row < ell)
+					if (row >= ell)
 						sitespin1[row][col]=spin;
 				}
 			}
@@ -302,9 +302,9 @@ int main(int argc, char const * argv[])
 	}
 
 	fout << beta << '\t' << en_sum / N_mc << endl;
-
+	
 // stores the current beta, energy & spin configuration
-    ofstream hout(string("spinA-" + axis_str + "-" + ell_str + ".dat").c_str());
+    ofstream hout(string("spinB-" + axis_str + "-" + ell_str + ".dat").c_str());
 	hout << beta << endl;
 	hout << energy << endl;
 	for (unsigned int i = 0; i < axis1; ++i)
@@ -320,7 +320,7 @@ int main(int argc, char const * argv[])
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////
 
 
 
