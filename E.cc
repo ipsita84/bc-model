@@ -6,6 +6,8 @@
 //averaging energy for the next N_mc updates
 //incorporating SIMULATED ANNEALING
 //Previous result: kT/J=0.695, D/J=1.965 at critical point
+// beta value at 2 T_c is 0.719424 
+
 
 #include <iostream>
 #include <fstream>

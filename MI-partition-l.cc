@@ -1,4 +1,7 @@
 // g++ -Wall -O3 `pkg-config --cflags --libs gsl tabdatrw interp2dpp` MI-partition-l.cc -o mi
+// icpc -Wall -O3 ${CFLAGS} ${LDFLAGS} \
+	`pkg-config --cflags --libs gsl tabdatrw-0.4 interp2dpp` \
+	MI-partition-l.cc -o mutualinfo
 // 2nd Renyi entropy for classical 2d Ising model in zero magnetic field
 //Metropolis algorithm employed
 //Parameters that can be changed for different runs:
@@ -14,6 +17,8 @@
 // = 2 ln(Z[T])+ln(Z[T/2])-ln(Z[A,2,T])-ln(Z[B,2,T])
 // =-2\int_0^{\beta} E - \int_0^{2 \beta} E 
 //   + \int_0^{\beta} E_replica_A + \int_0^{\beta} E_replica_B
+
+// beta value at 2 T_c is 0.719424 
 
 
 
@@ -88,7 +93,7 @@ int main(int argc, char const * argv[])
 
 	string axis_str = lexical_cast<string>(axis1);
 	string ell_str = lexical_cast<string>(ell);
-	ofstream fout(string("I2" + axis_str+ "p" + ell_str + ".dat").c_str());// Opens a file for output
+	ofstream fout(string("I2-"+ axis_str + "-"+ ell_str + ".dat").c_str());// Opens a file for output
 	
 	double mut_info(0); //mutual information I_2
 
