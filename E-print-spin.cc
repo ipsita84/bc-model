@@ -1,6 +1,6 @@
 // vim: set cin ts=4 sw=4 tw=80:
-// g++ -Wall -O3 E-print-spin.cc -o testo
-// Run with command line arguments, e.g. ./testo betamin betamax delbeta
+// g++ -Wall -O3 E-print-spin.cc -o normal
+// Run with command line arguments, e.g. ./normal betamin betamax delbeta
 // Considering 2d Blume Capel model
 //warming up system for first N_mc/10 loops
 //averaging energy for the next N_mc updates
