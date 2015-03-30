@@ -22,7 +22,8 @@
 // gen is a variable name
 // Its data-type is boost::random::mt19937
 boost::random::mt19937 gen;
-// boost::random::mt19937 gen(std::time(0)); // time(0) changes seed every time you run
+// boost::random::mt19937 gen(std::time(0)); 
+// time(0) changes seed every time you run
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
 using namespace std;
@@ -61,7 +62,7 @@ int main(int argc, char const * argv[])
 		return 1;
 	}	
 
-	double beta_min(0), beta_max(0), beta_stored(0), enrgy(0);
+	double beta_min(0), beta_max(0), beta_stored(0), energy(0);
 
 	try
 	{
@@ -87,9 +88,9 @@ int main(int argc, char const * argv[])
 	axis2 = axis1;
 
 	string axis_str = lexical_cast<string>(axis1);
-	ofstream fout(string("E" + axis_str + ".dat").c_str());	
+	ofstream fout(string("E" + axis_str + ".dat").c_str(), ios_base::app);	
 // Opens a file for output
-	ofstream gout(string("EA" + axis_str + ".dat").c_str());
+	ofstream gout(string("EA" + axis_str + ".dat").c_str(), ios_base::app);
 
 //      Create a 2d array that is axis1 * axis2
 	array_2d sitespin(boost::extents[axis1][axis2]);
@@ -215,8 +216,9 @@ int main(int argc, char const * argv[])
 		hout << beta << endl;
 		hout << energy << endl;
 		for (unsigned int i = 0; i < axis1; ++i)
-			for (unsigned int j = 0; j < axis2; ++j)
+			{for (unsigned int j = 0; j < axis2; ++j)
 				hout << sitespin[i][j] << endl;
+			}
 		hout.close();
 	}
 
