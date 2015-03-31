@@ -5,8 +5,8 @@
 //warming up system for first N_mc/10 loops
 //averaging energy for the next N_mc updates
 //incorporating SIMULATED ANNEALING
-//Previous result: kT/J=0.695, D/J=1.965 at critical point
-// beta value at 2 T_c is 0.719424
+//Previous result: kT/J=0.609, D/J=1.965 at critical point
+// beta value at 2 T_c is 0.821
 // axis2 = axis1
 //axis1 × axis1 square lattice, cut into 2 rectangles of
 //  sizes ell x axis1 & (axis1-ell) x axis1
@@ -37,7 +37,7 @@ typedef
 // Magnitude of parameters
 double J = 1.0;
 double D = 1.965;
-double del_beta = 0.0035971223;
+double del_beta = 0.821/20.0;
 unsigned int axis1 = 0;
 unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
@@ -123,12 +123,12 @@ int main(int argc, char const * argv[])
    if (beta_min!=0)
 	{ 	ifstream hin(string("spinB-" + axis_str+ "-" + ell_str + ".dat").c_str());
 		hin>> beta_stored;
-		if (beta_min != beta_stored)
-	    {
-		cout << "Expecting beta_min =" << beta_stored
-		     << endl << "Got " << beta_min << endl;
-		return 1;
-		}
+		//if (beta_min != beta_stored)
+	    //{
+		//cout << "Expecting beta_min =" << beta_stored
+		//     << endl << "Got " << beta_min << endl;
+		//return 1;
+		//}
 		hin>> energy;
 		for (unsigned int i = 0; i < axis1; ++i)
 		{for (unsigned int j = 0; j < axis2; ++j)
@@ -136,7 +136,7 @@ int main(int argc, char const * argv[])
 			hin>>sitespin2[i][j];
 			}
 		 }
-		beta_min = beta_min + del_beta;
+		beta_min = beta_stored + del_beta;
 	 }	
 
 

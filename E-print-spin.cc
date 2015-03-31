@@ -113,18 +113,18 @@ int main(int argc, char const * argv[])
    if (beta_min!=0)
 	{ 	ifstream hin(string("spin-" + axis_str + ".dat").c_str());
 		hin>> beta_stored;
-		if (beta_min != beta_stored)
-	    {
-		cout << "Expecting beta_min =" << beta_stored
-		     << endl << "Got " << beta_min << endl;
-		return 1;
-		}
+		//if (beta_min != beta_stored)
+	    //{
+		//cout << "Expecting beta_min =" << beta_stored
+		//     << endl << "Got " << beta_min << endl;
+		//return 1;
+		//}
 		hin>> energy;
 		for (unsigned int i = 0; i < axis1; ++i)
 		{for (unsigned int j = 0; j < axis2; ++j)
 			hin>>sitespin[i][j];
 		 }
-		beta_min = beta_min + del_beta;
+		beta_min = beta_stored + del_beta;
 	 }	
 
 
