@@ -37,7 +37,7 @@ typedef
 // Magnitude of parameters
 double J = 1.0;
 double D = 1.965;
-double del_beta = 0.0035971223;
+double del_beta =  (0.5/0.609) / 20.0;
 unsigned int axis1 = 0;
 unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
