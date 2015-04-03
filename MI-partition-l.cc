@@ -18,7 +18,8 @@
 // =-2\int_0^{\beta} E - \int_0^{2 \beta} E 
 //   + \int_0^{\beta} E_replica_A + \int_0^{\beta} E_replica_B
 
-// beta value at 2 T_c is 0.719424 
+//Previous result: kT/J=0.609, D/J=1.965 at critical point
+// beta value at 2 T_c is 0.821
 
 
 
@@ -45,7 +46,7 @@ using boost::bad_lexical_cast;
 // Magnitude of parameters
 double J = 1.0;
 double D = 1.965;
-double del_beta = 0.0035971223;
+double del_beta = (0.5/0.609) / 20.0;
 unsigned int axis1 = 0;
 unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
