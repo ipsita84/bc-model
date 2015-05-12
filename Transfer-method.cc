@@ -16,6 +16,7 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
+#include "Eigen/core"
 
 // gen is a variable name
 // Its data-type is boost::random::mt19937
@@ -40,12 +41,18 @@ unsigned int axis2 = axis1;
 //No.of Monte Carlo updates we want
 unsigned int N_mc = 1e6;
 
+// Size of the region, must be set by command line
+// Corresponds to the number of STRIPS in the system
+// So this value runs from 0 to axis1, inclusive
+unsigned int regionSize = 0;
+
 //Function templates
 int roll_coin(int a, int b);
 double random_real(int a, int b);
 double energy_tot(array_2d sitespin);
 //double mag_tot(array_2d sitespin);
 double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
+double calc_ratio(const array_2d& s1, const array2d& s2);
 
 int main(int argc, char const * argv[])
 {
@@ -376,3 +383,101 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 	return nn_en;
 }
 
+// Method for calcuiating the ratio of partition functions using the transfer matrix method
+// regionSize contains the current number of spins in region A
+double calc_ratio(const array_2d& s1, const array2d& s2){
+    Eigen::Matrix<double, 3,3> tmat; // Temporary matrix for filling and multiplying to results
+    Eigen::Matrix<double, 3,3> t_top; // Spins in top layer
+    Eigen::Matrix<double, 3,3> t_bot; // Spins in bottom layer
+    Eigen::Matrix<double, 3,3> t_con; // Spins with both layers connected
+
+    // Number of adjacent -1 (m), zero (0), and +1 (p) spins to the 1st and 2nd spin of the transfer matrix
+    int nm_top1 = 0;
+    int n0_top1 = 0;
+    int np_top1 = 0;
+    int nm_bot1 = 0;
+    int n0_bot1 = 0;
+    int np_bot1 = 0;
+
+    int nm_top2 = 0;
+    int n0_top2 = 0;
+    int np_top2 = 0;
+    int nm_bot2 = 0;
+    int n0_bot2 = 0;
+    int np_bot2 = 0;
+
+    // We will do the calculation along a fixed row, for all the spins in the column
+    // The notation for accessing spins is s1[row][column]
+    // Neighbours are +-1 in each direction, plus periodic boundary conditions
+    // axis1 is global and defines the length of the system in the row direction
+    // axis2 defines the length in the column direction
+    
+    // regionSize will be from 0 to L-1 (it could be L, but since we are always adding spins that isn't necessary)
+    // We are doing the transfer matrix over the spins in row=regionSize
+    int row_up = (regionSize+1)%axis1;
+    int row_down = (regionSize-1+axis1)%axis1;
+
+    for(int col=0; col<axis2; col++){
+        if(col==0){
+            nm_top1 = 0;
+            n0_top1 = 0;
+            np_top1 = 0;
+            nm_bot1 = 0;
+            n0_bot1 = 0;
+            np_bot1 = 0;
+
+            if(s1[row_up][col]==-1) nm_bot1++;
+            else if(s1[row_up][col]==0) n0_bot1++;
+            else if(s1[row_up][col]==1) np_bot1++;
+
+            if(s1[row_down][col]==-1) nm_bot1++;
+            else if(s1[row_down][col]==0) n0_bot1++;
+            else if(s1[row_down][col]==1) np_bot1++;
+
+            if(s2[row_up][col]==-1) nm_top1++;
+            else if(s2[row_up][col]==0) n0_top1++;
+            else if(s2[row_up][col]==1) np_top1++;
+
+            if(s2[row_down][col]==-1) nm_top1++;
+            else if(s2[row_down][col]==0) n0_top1++;
+            else if(s2[row_down][col]==1) np_top1++;
+        }
+        else{
+            nm_top1 = nm_top2;
+            n0_top1 = n0_top2;
+            np_top1 = np_top2;
+            nm_bot1 = nm_bot2;
+            n0_bot1 = n0_bot2;
+            np_bot1 = np_bot2;
+        }
+        // First set the occupation of the spins in both layers
+        nm_top2 = 0;
+        n0_top2 = 0;
+        np_top2 = 0;
+        nm_bot2 = 0;
+        n0_bot2 = 0;
+        np_bot2 = 0;
+
+        int col2 = (col+1)%axis2;
+
+        if(s1[row_up][col2]==-1) nm_bot2++
+        else if(s1[row_up][col2]==0) n0_bot2++;
+        else if(s1[row_up][col2]==1) np_bot1++;
+
+        if(s1[row_down][col2]==-1) nm_bot1++;
+        else if(s1[row_down][col2]==0) n0_bot1++;
+        else if(s1[row_down][col2]==1) np_bot1++;
+
+        if(s2[row_up][col2]==-1) nm_top1++;
+        else if(s2[row_up][col2]==0) n0_top1++;
+        else if(s2[row_up][col2]==1) np_top1++;
+
+        if(s2[row_down][col2]==-1) nm_top1++;
+        else if(s2[row_down][col2]==0) n0_top1++;
+        else if(s2[row_down][col2]==1) np_top1++;
+
+        //TODO
+    }
+
+    return 1.0;
+}
