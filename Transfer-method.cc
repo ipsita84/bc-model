@@ -53,12 +53,31 @@ double energy_tot(array_2d sitespin);
 //double mag_tot(array_2d sitespin);
 double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
 long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta);
+bool inA(const int row, const int col=0);
+void update(const double beta, const int sys_size, double& energy, array_2d& sitespin1, array_2d& sitespin2);
+
+class SIM {
+    public:
+        static int sys_size;
+        static int axis1;
+        static int axis2;
+        array_2d sitespin1;
+        array_2d sitespin2;
+        double energy;
+        double beta;
+        SIM(double _beta);
+        void update();
+}
+
+SIM::SIM(double _beta){
+    beta = _beta;
+}
 
 int main(int argc, char const * argv[])
 {
-	if (argc != 5)
+	if (argc != 6)
 	{
-		cout << "Expecting four inputs: beta_min, beta_max, del_beta, axis1."
+		cout << "Expecting five inputs: beta_min, beta_max, del_beta, axis1, regionA."
 		     << endl << "Got " << argc - 1 << endl;
 		return 1;
 	}	
@@ -85,13 +104,23 @@ int main(int argc, char const * argv[])
 		cout << "Cannot convert input for axis1 to unsigned int" << endl;
 		return 2;
 	}
+	try
+	{
+		regionSize = lexical_cast<unsigned int>(argv[5]);
+	}
+	catch (const bad_lexical_cast & x)
+	{
+		cout << "Cannot convert input for regionA to unsigned int" << endl;
+		return 2;
+	}
 	
 	axis2 = axis1;
 
 	string axis_str = lexical_cast<string>(axis1);
 	ofstream fout(string("Em" + axis_str + ".dat").c_str());	
-// Opens a file for output
-	
+    // Opens a file for output
+	string reg_str = lexical_cast<string>(regionSize);
+	ofstream fratio(string("ratio" + axis_str + "R" + reg_str + ".dat").c_str());	
 
 	//define replica 1 spin configuration array
 	array_2d sitespin1(boost::extents[axis1][axis2]);
@@ -109,6 +138,7 @@ int main(int argc, char const * argv[])
 
 
 	double energy =2.0*energy_tot(sitespin1);
+    unsigned int sys_size = axis1 * axis2;
 
 	//calculate avg energy for replica spin config at temp 1/beta
 	//logic: for a[n1][n2], a[n1] is n1 copies of 1d array of length n2
@@ -116,165 +146,22 @@ int main(int argc, char const * argv[])
 
 	for (double beta =beta_min;beta<beta_max+del_beta;beta += del_beta)
 	{
-		unsigned int sys_size = axis1 * axis2;
-		unsigned int row, col, label;
-		double r(0), acc_ratio(0) ;
-	
-		double en_sum(0);
-		int spin(0),newspin(0),choice[2]={0,0},choice_ind;
-
-
+        double en_sum(0);
 		for (unsigned int i = 1; i <=1e5+N_mc; ++i)
 		{
 			for (unsigned int j = 1; j <=3*sys_size/2; ++j)
 			{
-				
-			//Choose a random spin site for the entire 2 replica system
-			double energy_diff(0);
-			label = roll_coin(1,2*sys_size);
-
-
-			//if the random spin site is located in layer 1
-			if (label <= sys_size)
-			{
-				if (label % axis2 == 0)
-				{
-					row = (label / axis2) - 1;
-					col = axis2 -1 ;
-				}
-				else
-				{
-					col = label % axis2 - 1;
-					row = (label-col-1)/axis2;
-				}
-
-        		spin = sitespin1[row][col];
-				if (spin==0) 
-				{	choice[0]=-1;
-					choice[1]=1;
-				}
-				if (spin==-1) 
-				{	choice[0]=0;
-					choice[1]=1;
-				}
-				if (spin==1) 
-				{	choice[0]=-1;
-					choice[1]=0;
-				}
-
-				choice_ind = roll_coin(0,1);
-				newspin = choice[choice_ind];
- 
-				energy_diff =-nn_energy(sitespin1,row,col);
-				energy_diff -=D*spin*spin;
-				sitespin1[row][col]=newspin;
-				energy_diff +=nn_energy(sitespin1,row,col);
-				energy_diff +=D*newspin*newspin;
-
-
-				if (row < axis1/2)
-				  { energy_diff -=nn_energy(sitespin2,row,col);
-					energy_diff -=D*spin*spin;
-					sitespin2[row][col]=newspin;
-					energy_diff +=nn_energy(sitespin2,row,col);
-					energy_diff +=D*newspin*newspin;
-			      }
-
-				//Generate a random no. r such that 0 < r < 1
-				r = random_real(0, 1);
-				acc_ratio = exp(-1.0 * energy_diff *beta);
-
-				//Spin flipped if r <= acceptance ratio
-				if (r <= acc_ratio)
-				{
-
-						energy += energy_diff;
-				}
-				else 
-				{   sitespin1[row][col] =spin;
-					if (row < axis1/2)
-						sitespin2[row][col]=spin;
-				}
-			}
-
-			//if the random spin site is located in layer 2
-			if (label > sys_size)
-			{
-				label -= sys_size;
-
-				if (label % axis2 == 0)
-				{
-					row = (label / axis2) - 1;
-					col = axis2 -1 ;
-				}
-				else
-				{
-					col = label % axis2 - 1;
-					row = (label-col-1)/axis2;
-				}
-
-        		spin = sitespin2[row][col];
-				 if (spin==0) 
-					{	choice[0]=-1;
-						choice[1]=1;
-					}
-				 if (spin==-1) 
-					{	choice[0]=0;
-						choice[1]=1;
-					}
-				 if (spin==1) 
-					{	choice[0]=-1;
-						choice[1]=0;
-					}
-
-				choice_ind = roll_coin(0,1);
-				newspin = choice[choice_ind];
- 
-				energy_diff =-nn_energy(sitespin2,row,col);
-				energy_diff -=D*spin*spin;
-				sitespin2[row][col]=newspin;
-				energy_diff +=nn_energy(sitespin2,row,col);
-				energy_diff +=D*newspin*newspin;
-
-
-				if (row < axis1/2)
-				  { energy_diff -=nn_energy(sitespin1,row,col);
-					energy_diff -=D*spin*spin;
-					sitespin1[row][col]=newspin;
-					energy_diff +=nn_energy(sitespin1,row,col);
-					energy_diff +=D*newspin*newspin;
-			      }
-
-
-				//Generate a random no. r such that 0 < r < 1
-				r = random_real(0, 1);
-				acc_ratio = exp(-1.0 * energy_diff *beta);
-
-				//Spin flipped if r <= acceptance ratio
-				if (r <= acc_ratio)
-				{
-
-						energy += energy_diff;
-				}
-				else 
-				{   sitespin2[row][col] =spin;
-					if (row < axis1/2)
-						sitespin1[row][col]=spin;
-				}
-			}
-		}
-
+                update(beta, sys_size, energy, sitespin1, sitespin2);
+            }
 		if (i> 1e5) en_sum += energy;
-	}
-
+        }
 	fout << beta << '\t' << en_sum / N_mc << endl;
 	}
 
+    fratio.close();
 	fout.close();
 	return 0;
 }
-
-
 
 //function to generate random integer
 // between 2 integers a & b, including a & b
@@ -384,7 +271,7 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 }
 
 // Method for calcuiating the ratio of partition functions using the transfer matrix method
-// regionSize contains the current number of spins in region A
+// regionSize contains the current number of rows in region A
 long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta){
     Eigen::Matrix<double, 3,3> tmat; // Temporary matrix for filling and multiplying to results
     Eigen::Matrix<double, 3,3> t_top; // Spins in top layer
@@ -572,4 +459,153 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
     tcon += log(t_con.trace());
 
     return exp(tcon - ttop - tbot);
+}
+
+bool inA(const int row, const int col){
+    if(row < regionSize){
+        return true;
+    }
+    return false;
+}
+
+void update(const double beta, const int sys_size, double& energy, array_2d& sitespin1, array_2d& sitespin2){
+
+    unsigned int row, col;
+    double r(0), acc_ratio(0) ;
+
+    double en_sum(0);
+    int spin(0),newspin(0),choice[2]={0,0},choice_ind;
+
+    //Choose a random spin site for the entire 2 replica system
+    double energy_diff(0);
+    int label = roll_coin(1,2*sys_size);
+
+    //if the random spin site is located in layer 1
+    if (label <= sys_size)
+    {
+        if (label % axis2 == 0)
+        {
+            row = (label / axis2) - 1;
+            col = axis2 -1 ;
+        }
+        else
+        {
+            col = label % axis2 - 1;
+            row = (label-col-1)/axis2;
+        }
+
+        spin = sitespin1[row][col];
+        if (spin==0) 
+        {	choice[0]=-1;
+            choice[1]=1;
+        }
+        if (spin==-1) 
+        {	choice[0]=0;
+            choice[1]=1;
+        }
+        if (spin==1) 
+        {	choice[0]=-1;
+            choice[1]=0;
+        }
+
+        choice_ind = roll_coin(0,1);
+        newspin = choice[choice_ind];
+
+        energy_diff =-nn_energy(sitespin1,row,col);
+        energy_diff -=D*spin*spin;
+        sitespin1[row][col]=newspin;
+        energy_diff +=nn_energy(sitespin1,row,col);
+        energy_diff +=D*newspin*newspin;
+
+
+        if (row < axis1/2)
+          { energy_diff -=nn_energy(sitespin2,row,col);
+            energy_diff -=D*spin*spin;
+            sitespin2[row][col]=newspin;
+            energy_diff +=nn_energy(sitespin2,row,col);
+            energy_diff +=D*newspin*newspin;
+          }
+
+        //Generate a random no. r such that 0 < r < 1
+        r = random_real(0, 1);
+        acc_ratio = exp(-1.0 * energy_diff *beta);
+
+        //Spin flipped if r <= acceptance ratio
+        if (r <= acc_ratio)
+        {
+
+                energy += energy_diff;
+        }
+        else 
+        {   sitespin1[row][col] =spin;
+            if (row < axis1/2)
+                sitespin2[row][col]=spin;
+        }
+    }
+
+    //if the random spin site is located in layer 2
+    if (label > sys_size)
+    {
+        label -= sys_size;
+
+        if (label % axis2 == 0)
+        {
+            row = (label / axis2) - 1;
+            col = axis2 -1 ;
+        }
+        else
+        {
+            col = label % axis2 - 1;
+            row = (label-col-1)/axis2;
+        }
+
+        spin = sitespin2[row][col];
+         if (spin==0) 
+            {	choice[0]=-1;
+                choice[1]=1;
+            }
+         if (spin==-1) 
+            {	choice[0]=0;
+                choice[1]=1;
+            }
+         if (spin==1) 
+            {	choice[0]=-1;
+                choice[1]=0;
+            }
+
+        choice_ind = roll_coin(0,1);
+        newspin = choice[choice_ind];
+
+        energy_diff =-nn_energy(sitespin2,row,col);
+        energy_diff -=D*spin*spin;
+        sitespin2[row][col]=newspin;
+        energy_diff +=nn_energy(sitespin2,row,col);
+        energy_diff +=D*newspin*newspin;
+
+
+        if (row < axis1/2)
+          { energy_diff -=nn_energy(sitespin1,row,col);
+            energy_diff -=D*spin*spin;
+            sitespin1[row][col]=newspin;
+            energy_diff +=nn_energy(sitespin1,row,col);
+            energy_diff +=D*newspin*newspin;
+          }
+
+
+        //Generate a random no. r such that 0 < r < 1
+        r = random_real(0, 1);
+        acc_ratio = exp(-1.0 * energy_diff *beta);
+
+        //Spin flipped if r <= acceptance ratio
+        if (r <= acc_ratio)
+        {
+
+                energy += energy_diff;
+        }
+        else 
+        {   sitespin2[row][col] =spin;
+            if (row < axis1/2)
+                sitespin1[row][col]=spin;
+        }
+    }
 }
