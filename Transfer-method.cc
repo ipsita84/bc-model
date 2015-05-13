@@ -52,7 +52,7 @@ double random_real(int a, int b);
 double energy_tot(array_2d sitespin);
 //double mag_tot(array_2d sitespin);
 double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
-double calc_ratio(const array_2d& s1, const array2d& s2);
+long double calc_ratio(const array_2d& s1, const array2d& s2, const double beta);
 
 int main(int argc, char const * argv[])
 {
@@ -385,11 +385,19 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 
 // Method for calcuiating the ratio of partition functions using the transfer matrix method
 // regionSize contains the current number of spins in region A
-double calc_ratio(const array_2d& s1, const array2d& s2){
+long double calc_ratio(const array_2d& s1, const array2d& s2, const double beta){
     Eigen::Matrix<double, 3,3> tmat; // Temporary matrix for filling and multiplying to results
     Eigen::Matrix<double, 3,3> t_top; // Spins in top layer
     Eigen::Matrix<double, 3,3> t_bot; // Spins in bottom layer
     Eigen::Matrix<double, 3,3> t_con; // Spins with both layers connected
+
+    t_top.setIdentity(3,3);
+    t_bot.setIdentity(3,3);
+    t_con.setIdentity(3,3);
+
+    long double ttop = 0.0;
+    long double tbot = 0.0;
+    long double tcon = 0.0;
 
     // Number of adjacent -1 (m), zero (0), and +1 (p) spins to the 1st and 2nd spin of the transfer matrix
     int nm_top1 = 0;
@@ -476,8 +484,92 @@ double calc_ratio(const array_2d& s1, const array2d& s2){
         else if(s2[row_down][col2]==0) n0_top1++;
         else if(s2[row_down][col2]==1) np_top1++;
 
-        //TODO
-    }
+        // Now we know the number of adjacent spins (in the neighboring rows, ignoring the columns) for the spin in position col and col+1
+        // We will split half of the interaction term to each spin, since for each bond in the column that we are doing the transfer matrix over
+        // will have each physical spin occuring twice
+        // The two energy terms we have are 
+        // -J \sum_{<i,j>} s_i s_j
+        // D s_i^2
+        // tmat is a (3,3) matrix, where the rows correspond to spin col = -1,0,1
+        // and the columns correspond to spin col2 = -1,0,1
+        // We calculate the energy using the above quantities, then exponentiate the terms to get the weights of each configuration
+        // By taking the product of matrices and finally a trace, we effectively integrate over the spin chain with the rest of the system frozen
 
-    return 1.0;
+        // First the calculation for the bottom layer in isolation
+        // -1, -1 state
+        tmat(0,0) = exp(-0.5*beta*(D*2 - J*(2 + nm_bot1 + nm_bot2)));
+        // -1, 0 state
+        tmat(0,1) = exp(-0.5*beta*(D*1 - J*(0 + nm_bot1 + n0_bot2)));
+        // -1, 1 state
+        tmat(0,2) = exp(-0.5*beta*(D*2 - J*(-2 + nm_bot1 + np_bot2)));
+        // 0, -1 state
+        tmat(1,0) = exp(-0.5*beta*(D*1 - J*(0 + n0_bot1 + nm_bot2)));
+        // 0, 0 state
+        tmat(1,1) = exp(-0.5*beta*(D*0 - J*(0 + n0_bot1 + n0_bot2)));
+        // 0, 1 state
+        tmat(1,2) = exp(-0.5*beta*(D*1 - J*(0 + n0_bot1 + np_bot2)));
+        // 1, -1 state
+        tmat(2,0) = exp(-0.5*beta*(D*2 - J*(-2 + np_bot1 + nm_bot2)));
+        // 1, 0 state
+        tmat(2,1) = exp(-0.5*beta*(D*1 - J*(0 + np_bot1 + n0_bot2)));
+        // 1, 1 state
+        tmat(2,2) = exp(-0.5*beta*(D*2 - J*(2 + np_bot1 + np_bot2)));
+
+        t_bot *= tmat;
+        tbot += log(t_bot.maxCoeff());
+        t_bot /= t_bot.maxCoeff();
+
+        // Now the top layer in isolation
+        // -1, -1 state
+        tmat(0,0) = exp(-0.5*beta*(D*2 - J*(2 + nm_top1 + nm_top2)));
+        // -1, 0 state
+        tmat(0,1) = exp(-0.5*beta*(D*1 - J*(0 + nm_top1 + n0_top2)));
+        // -1, 1 state
+        tmat(0,2) = exp(-0.5*beta*(D*2 - J*(-2 + nm_top1 + np_top2)));
+        // 0, -1 state
+        tmat(1,0) = exp(-0.5*beta*(D*1 - J*(0 + n0_top1 + nm_top2)));
+        // 0, 0 state
+        tmat(1,1) = exp(-0.5*beta*(D*0 - J*(0 + n0_top1 + n0_top2)));
+        // 0, 1 state
+        tmat(1,2) = exp(-0.5*beta*(D*1 - J*(0 + n0_top1 + np_top2)));
+        // 1, -1 state
+        tmat(2,0) = exp(-0.5*beta*(D*2 - J*(-2 + np_top1 + nm_top2)));
+        // 1, 0 state
+        tmat(2,1) = exp(-0.5*beta*(D*1 - J*(0 + np_top1 + n0_top2)));
+        // 1, 1 state
+        tmat(2,2) = exp(-0.5*beta*(D*2 - J*(2 + np_top1 + np_top2)));
+
+        t_top *= tmat;
+        ttop += log(t_top.maxCoeff());
+        t_top /= t_top.maxCoeff();
+
+        // Now the calculation of both layers connected
+        // -1, -1 state
+        tmat(0,0) = exp(-0.5*beta*(D*4 - J*(4 + nm_bot1 + nm_bot2 + nm_top1 + nm_top2)));
+        // -1, 0 state
+        tmat(0,1) = exp(-0.5*beta*(D*2 - J*(0 + nm_bot1 + n0_bot2 + nm_top1 + n0_top2)));
+        // -1, 1 state
+        tmat(0,2) = exp(-0.5*beta*(D*4 - J*(-4 + nm_bot1 + np_bot2 + nm_top1 + np_top2)));
+        // 0, -1 state
+        tmat(1,0) = exp(-0.5*beta*(D*2 - J*(0 + n0_bot1 + nm_bot2 + n0_top1 + nm_top2)));
+        // 0, 0 state
+        tmat(1,1) = exp(-0.5*beta*(D*0 - J*(0 + n0_bot1 + n0_bot2 + n0_top1 + n0_top2)));
+        // 0, 1 state
+        tmat(1,2) = exp(-0.5*beta*(D*2 - J*(0 + n0_bot1 + np_bot2 + n0_top1 + np_top2)));
+        // 1, -1 state
+        tmat(2,0) = exp(-0.5*beta*(D*4 - J*(-4 + np_bot1 + nm_bot2 + np_top1 + nm_top2)));
+        // 1, 0 state
+        tmat(2,1) = exp(-0.5*beta*(D*2 - J*(0 + np_bot1 + n0_bot2 + np_top1 + n0_top2)));
+        // 1, 1 state
+        tmat(2,2) = exp(-0.5*beta*(D*4 - J*(4 + np_bot1 + np_bot2 + np_top1 + np_top2)));
+
+        t_con *= tmat;
+        tcon += log(t_con.maxCoeff());
+        t_con /= t_con.maxCoeff();
+    }
+    ttop += log(t_top.trace());
+    tbot += log(t_bot.trace());
+    tcon += log(t_con.trace());
+
+    return exp(tcon - ttop - tbot);
 }
