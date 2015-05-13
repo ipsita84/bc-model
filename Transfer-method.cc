@@ -16,7 +16,7 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
-#include "Eigen/core"
+#include "Eigen/Core"
 
 // gen is a variable name
 // Its data-type is boost::random::mt19937
@@ -52,7 +52,7 @@ double random_real(int a, int b);
 double energy_tot(array_2d sitespin);
 //double mag_tot(array_2d sitespin);
 double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
-long double calc_ratio(const array_2d& s1, const array2d& s2, const double beta);
+long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta);
 
 int main(int argc, char const * argv[])
 {
@@ -385,7 +385,7 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 
 // Method for calcuiating the ratio of partition functions using the transfer matrix method
 // regionSize contains the current number of spins in region A
-long double calc_ratio(const array_2d& s1, const array2d& s2, const double beta){
+long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta){
     Eigen::Matrix<double, 3,3> tmat; // Temporary matrix for filling and multiplying to results
     Eigen::Matrix<double, 3,3> t_top; // Spins in top layer
     Eigen::Matrix<double, 3,3> t_bot; // Spins in bottom layer
@@ -468,7 +468,7 @@ long double calc_ratio(const array_2d& s1, const array2d& s2, const double beta)
 
         int col2 = (col+1)%axis2;
 
-        if(s1[row_up][col2]==-1) nm_bot2++
+        if(s1[row_up][col2]==-1) nm_bot2++;
         else if(s1[row_up][col2]==0) n0_bot2++;
         else if(s1[row_up][col2]==1) np_bot1++;
 

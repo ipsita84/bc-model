@@ -15,8 +15,8 @@
 
 all: normal replicaA replicaB mutualinfo
 
-CFLAGS = -I${HOME}/usr/include
-LDFLAGS = -L${HOME}/usr/lib
+CFLAGS = -I/home/ipsita/usr/include
+LDFLAGS = -L/home/ipsita/usr/lib
 
 normal: E-print-spin.cc
 	icpc -Wall ${CFLAGS} ${LDFLAGS} -O3 E-print-spin.cc -o normal
@@ -27,6 +27,8 @@ replicaA: E-replicaA-l-print-spin.cc
 replicaB: E-replicaB-l-print-spin.cc
 	icpc -Wall ${CFLAGS} ${LDFLAGS} -O3 E-replicaB-l-print-spin.cc -o replicaB
 
+transfer: Transfer-method.cc
+	icpc -Wall ${CFLAGS} ${LDFLAGS} -O3 $< -o $@
 
 mutualinfo: MI-partition-l.cc
 	icpc -Wall -O3 ${CFLAGS} ${LDFLAGS} \
@@ -36,4 +38,4 @@ mutualinfo: MI-partition-l.cc
 .PHONY: clean
 
 clean:
-	rm -f normal replicaA replicaB mutualinfo *.o 
+	rm -f normal replicaA replicaB mutualinfo transfer *.o 
