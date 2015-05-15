@@ -54,35 +54,51 @@ double energy_tot(array_2d sitespin);
 double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
 long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta);
 
+bool inA(const int row, const int col=0){
+    if (row<regionSize){
+            return true;
+    }
+    return false;
+}
+
 int main(int argc, char const * argv[])
 {
-	if (argc != 5)
+	if (argc != 4)
 	{
-		cout << "Expecting four inputs: beta_min, beta_max, del_beta, axis1."
+		cout << "Expecting three inputs: beta, axis1, regionSize"
 		     << endl << "Got " << argc - 1 << endl;
 		return 1;
 	}	
 
-	double beta_min(0), beta_max(0), del_beta(0);
+    double beta(0);
 
 	try
 	{
-		beta_min = lexical_cast<double>(argv[1]);
-		beta_max = lexical_cast<double>(argv[2]);
-		del_beta = lexical_cast<double>(argv[3]);
+		beta = lexical_cast<double>(argv[1]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
 		cout << "Cannot convert input to double" << endl;
 		return 2;
 	}
+
 	try
 	{
-		axis1 = lexical_cast<unsigned int>(argv[4]);
+		axis1 = lexical_cast<unsigned int>(argv[2]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
 		cout << "Cannot convert input for axis1 to unsigned int" << endl;
+		return 2;
+	}
+
+	try
+	{
+		regionSize = lexical_cast<unsigned int>(argv[3]);
+	}
+	catch (const bad_lexical_cast & x)
+	{
+		cout << "Cannot convert input for regionSize to unsigned int" << endl;
 		return 2;
 	}
 	
@@ -90,7 +106,7 @@ int main(int argc, char const * argv[])
 
 	string axis_str = lexical_cast<string>(axis1);
 	ofstream fout(string("Em" + axis_str + ".dat").c_str());	
-// Opens a file for output
+    // Opens a file for output
 	
 
 	//define replica 1 spin configuration array
@@ -114,8 +130,8 @@ int main(int argc, char const * argv[])
 	//logic: for a[n1][n2], a[n1] is n1 copies of 1d array of length n2
 
 
-	for (double beta =beta_min;beta<beta_max+del_beta;beta += del_beta)
-	{
+	//for (double beta =beta_min;beta<beta_max+del_beta;beta += del_beta)
+	//{
 		unsigned int sys_size = axis1 * axis2;
 		unsigned int row, col, label;
 		double r(0), acc_ratio(0) ;
@@ -126,7 +142,7 @@ int main(int argc, char const * argv[])
 
 		for (unsigned int i = 1; i <=1e5+N_mc; ++i)
 		{
-			for (unsigned int j = 1; j <=3*sys_size/2; ++j)
+			for (unsigned int j = 1; j <=2*sys_size; ++j)
 			{
 				
 			//Choose a random spin site for the entire 2 replica system
@@ -172,7 +188,7 @@ int main(int argc, char const * argv[])
 				energy_diff +=D*newspin*newspin;
 
 
-				if (row < axis1/2)
+				if (inA(row))
 				  { energy_diff -=nn_energy(sitespin2,row,col);
 					energy_diff -=D*spin*spin;
 					sitespin2[row][col]=newspin;
@@ -192,7 +208,7 @@ int main(int argc, char const * argv[])
 				}
 				else 
 				{   sitespin1[row][col] =spin;
-					if (row < axis1/2)
+					if (inA(row))
 						sitespin2[row][col]=spin;
 				}
 			}
@@ -237,7 +253,7 @@ int main(int argc, char const * argv[])
 				energy_diff +=D*newspin*newspin;
 
 
-				if (row < axis1/2)
+				if (inA(row))
 				  { energy_diff -=nn_energy(sitespin1,row,col);
 					energy_diff -=D*spin*spin;
 					sitespin1[row][col]=newspin;
@@ -258,7 +274,7 @@ int main(int argc, char const * argv[])
 				}
 				else 
 				{   sitespin2[row][col] =spin;
-					if (row < axis1/2)
+					if (inA(row))
 						sitespin1[row][col]=spin;
 				}
 			}
@@ -268,7 +284,7 @@ int main(int argc, char const * argv[])
 	}
 
 	fout << beta << '\t' << en_sum / N_mc << endl;
-	}
+	//}
 
 	fout.close();
 	return 0;
