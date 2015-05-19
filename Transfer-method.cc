@@ -39,7 +39,7 @@ unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
 
 //No.of Monte Carlo updates we want
-unsigned int N_mc = 1e6;
+unsigned int N_mc = 1e7;
 
 // Size of the region, must be set by command line
 // Corresponds to the number of STRIPS in the system
@@ -104,10 +104,12 @@ int main(int argc, char const * argv[])
 	
 	axis2 = axis1;
 
-	string axis_str = lexical_cast<string>(axis1);
-	ofstream fout(string("Em" + axis_str + ".dat").c_str());	
+	//string axis_str = lexical_cast<string>(axis1);
+	//ofstream fout(string("Em" + axis_str + ".dat").c_str());	
     // Opens a file for output
 	
+    string ratio_str = lexical_cast<string>(regionSize);
+    ofstream fratio(string("ratio_" + ratio_str).c_str());
 
 	//define replica 1 spin configuration array
 	array_2d sitespin1(boost::extents[axis1][axis2]);
@@ -137,6 +139,8 @@ int main(int argc, char const * argv[])
 		double r(0), acc_ratio(0) ;
 	
 		double en_sum(0);
+		long double ratio_sum(0);
+        int ratio_counter(0);
 		int spin(0),newspin(0),choice[2]={0,0},choice_ind;
 
 
@@ -281,12 +285,22 @@ int main(int argc, char const * argv[])
 		}
 
 		if (i> 1e5) en_sum += energy;
+		if (i> 1e5){
+            ratio_sum += calc_ratio(sitespin1, sitespin2, beta);
+            ratio_counter++;
+        }
+        if (ratio_counter >= 1e5){
+            fratio << ratio_sum / ratio_counter << endl;
+            ratio_counter = 0;
+            ratio_sum = 0;
+        }
 	}
 
-	fout << beta << '\t' << en_sum / N_mc << endl;
+	//fout << beta << '\t' << en_sum / N_mc << endl;
+	//fratio << ratio_sum / N_mc << endl;
 	//}
 
-	fout.close();
+	//fout.close();
 	return 0;
 }
 
