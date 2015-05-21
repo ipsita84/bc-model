@@ -39,7 +39,7 @@ unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
 
 //No.of Monte Carlo updates we want
-unsigned int N_mc = 1e7;
+unsigned int N_mc = 1e6;
 
 // Size of the region, must be set by command line
 // Corresponds to the number of STRIPS in the system
@@ -499,6 +499,7 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
         // Now we know the number of adjacent spins (in the neighboring rows, ignoring the columns) for the spin in position col and col+1
         // We will split half of the interaction term to each spin, since for each bond in the column that we are doing the transfer matrix over
         // will have each physical spin occuring twice
+        //
         // The two energy terms we have are 
         // -J \sum_{<i,j>} s_i s_j
         // +D s_i^2
@@ -507,9 +508,18 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
         // 1    1       2D - J
         // 1    0       D
         // 1    -1      2D + J
+        // 0    1       D
         // 0    0       0
         // 0    -1      D
+        // -1   1       2D + J
+        // -1   0       D
         // -1   -1      2D - J
+        // 
+        // Keep in mind that we split the D contributions up into the two
+        // transfer matrices, while the J term of the interaction is only
+        // in one matrix. Contributions from external spins are also split up
+        // over two matrices.
+        //
         // tmat is a (3,3) matrix, where the rows correspond to spin col = -1,0,1
         // and the columns correspond to spin col2 = -1,0,1
         // We calculate the energy using the above quantities, then exponentiate the terms to get the weights of each configuration
