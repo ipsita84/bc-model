@@ -63,18 +63,23 @@ bool inA(const int row, const int col=0){
 
 int main(int argc, char const * argv[])
 {
-	if (argc != 4)
+	if (argc != 6)
 	{
-		cout << "Expecting three inputs: beta, axis1, regionSize"
+		cout << "Expecting five inputs: bmin, bmax, dbeta, axis1, regionSize"
 		     << endl << "Got " << argc - 1 << endl;
 		return 1;
 	}	
 
     double beta(0);
+    double bmin(0);
+    double bmax(0);
+    double dbeta(0);
 
 	try
 	{
-		beta = lexical_cast<double>(argv[1]);
+		bmin = lexical_cast<double>(argv[1]);
+		bmax = lexical_cast<double>(argv[2]);
+		dbeta = lexical_cast<double>(argv[3]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
@@ -84,7 +89,7 @@ int main(int argc, char const * argv[])
 
 	try
 	{
-		axis1 = lexical_cast<unsigned int>(argv[2]);
+		axis1 = lexical_cast<unsigned int>(argv[4]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
@@ -94,7 +99,7 @@ int main(int argc, char const * argv[])
 
 	try
 	{
-		regionSize = lexical_cast<unsigned int>(argv[3]);
+		regionSize = lexical_cast<unsigned int>(argv[5]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
@@ -108,8 +113,6 @@ int main(int argc, char const * argv[])
 	//ofstream fout(string("Em" + axis_str + ".dat").c_str());	
     // Opens a file for output
 	
-    string ratio_str = lexical_cast<string>(regionSize);
-    ofstream fratio(string("ratio_" + ratio_str).c_str());
 
 	//define replica 1 spin configuration array
 	array_2d sitespin1(boost::extents[axis1][axis2]);
@@ -132,8 +135,11 @@ int main(int argc, char const * argv[])
 	//logic: for a[n1][n2], a[n1] is n1 copies of 1d array of length n2
 
 
-	//for (double beta =beta_min;beta<beta_max+del_beta;beta += del_beta)
-	//{
+	for (beta =bmin;beta<bmax;beta += dbeta)
+	{
+        string beta_str = lexical_cast<string>(beta);
+        ofstream fratio(string("ratio_" + beta_str).c_str());
+
 		unsigned int sys_size = axis1 * axis2;
 		unsigned int row, col, label;
 		double r(0), acc_ratio(0) ;
@@ -298,7 +304,8 @@ int main(int argc, char const * argv[])
 
 	//fout << beta << '\t' << en_sum / N_mc << endl;
 	//fratio << ratio_sum / N_mc << endl;
-	//}
+    fratio.close();
+	}
 
 	//fout.close();
 	return 0;
