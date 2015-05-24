@@ -5,7 +5,7 @@
 //warming up system for first N_mc/10 loops
 //averaging energy for the next N_mc updates
 //incorporating SIMULATED ANNEALING
-//Previous result: kT/J=0.695, D/J=1.965 at critical point
+//Previous result: kT/J=0.609, D/J=1.965 at critical point
 // beta value at 2 T_c is 0.719424 
 
 
@@ -34,7 +34,7 @@ typedef
 // Magnitude of J
 double J = 1.0;
 double D = 1.965;
-double del_beta = 0.0035971223;
+double del_beta = (0.5/0.609) / 200.0;;
 unsigned int axis1 = 0;
 unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
