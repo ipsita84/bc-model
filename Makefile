@@ -27,7 +27,7 @@ replicaA: E-replicaA-l-print-spin.cc
 replicaB: E-replicaB-l-print-spin.cc
 	icpc -Wall ${CFLAGS} ${LDFLAGS} -O3 E-replicaB-l-print-spin.cc -o replicaB
 
-transfer: Transfer-methodv2.cc
+transfer: Transfer-methodv3.cc
 	icpc -Wall ${CFLAGS} ${LDFLAGS} -O3 $< -o $@
 
 mutualinfo: MI-partition-l.cc
