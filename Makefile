@@ -30,6 +30,9 @@ replicaB: E-replicaB-l-print-spin.cc
 transfer: Transfer-methodv3.cc
 	icpc -Wall ${CFLAGS} ${LDFLAGS} -O3 $< -o $@
 
+test: Transfer-methodv3.cc
+	icpc -Wall ${CFLAGS} ${LDFLAGS} -g $< -o $@
+
 mutualinfo: MI-partition-l.cc
 	icpc -Wall -O3 ${CFLAGS} ${LDFLAGS} \
 	`pkg-config --cflags --libs gsl tabdatrw-0.4 interp2dpp` \

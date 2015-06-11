@@ -45,7 +45,9 @@ unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
 
 //No.of Monte Carlo updates we want
-unsigned int N_mc = 1e7;
+unsigned int N_mc = 1e6;
+//No. of measurements per write to fil
+unsigned int N_meas = 1e5;
 
 //Function templates
 int roll_coin(int a, int b);
@@ -90,6 +92,7 @@ int main(int argc, char const * argv[])
     
     vector<double> betas;
     vector<int> meas;
+    vector<ofstream*> fouts;
     getBetas(betas, meas);
     int numB = betas.size();
 
@@ -108,16 +111,22 @@ int main(int argc, char const * argv[])
         }
     }
 
-    vector<array_2d> ss1;
-    vector<array_2d> ss2;
+    vector<array_2d*> ss1;
+    vector<array_2d*> ss2;
     vector<double> energy;
+    vector<long double> ratio_sum;
 
     // For simplicity, push back the same random copy to all the temperatures
     for(int b=0;b<numB;b++){
-        ss1.push_back(array_2d(tsitespin1));
-        ss2.push_back(array_2d(tsitespin2));
+        ss1.push_back(new array_2d(tsitespin1));
+        ss2.push_back(new array_2d(tsitespin2));
         energy.push_back(2.0*energy_tot(tsitespin1));
+        fouts.push_back(new ofstream(string("ratio_" + lexical_cast<string>(betas[b])).c_str()));
+        ratio_sum.push_back(0);
     }
+    //std::cout << ss1[0] << std::endl;
+    //std::cout << (*ss1[0])[0][0] << std::endl;
+    //return 1;
 
 	//calculate avg energy for replica spin config at temp 1/beta
 	//logic: for a[n1][n2], a[n1] is n1 copies of 1d array of length n2
@@ -127,161 +136,164 @@ int main(int argc, char const * argv[])
     unsigned int row, col, label;
     double r(0), acc_ratio(0) ;
     double en_sum(0);
-    long double  ratio_sum(0);
     int spin(0),newspin(0),choice[2]={0,0},choice_ind;
     unsigned int eff_sys_size = 2*sys_size - ell * axis2 ;
 
-    for(int b=0;b,numB;b++){
-		for (unsigned int i = 1; i <=1e5+N_mc; ++i)
-		{
-			for (unsigned int j = 1; j <=eff_sys_size; ++j)
-			{
-				
-			//Choose a random spin site for the entire 2 replica system
-			double energy_diff(0);
-			label = roll_coin(1,2*sys_size);
 
-			//if the random spin site is located in layer 1
-			if (label <= sys_size)
-			{
-				if (label % axis2 == 0)
-				{
-					row = (label / axis2) - 1;
-					col = axis2 -1 ;
-				}
-				else
-				{
-					col = label % axis2 - 1;
-					row = (label-col-1)/axis2;
-				}
+    for (unsigned int i = 1; i <=1e5+N_mc; ++i){
+        for(int b=0;b<numB;b++){
+			for (unsigned int j = 1; j <=eff_sys_size; ++j){
+                //Choose a random spin site for the entire 2 replica system
+                double energy_diff(0);
+                label = roll_coin(1,2*sys_size);
 
-        		spin = ss1[b][row][col];
-				if (spin==0) 
-				{	choice[0]=-1;
-					choice[1]=1;
-				}
-				if (spin==-1) 
-				{	choice[0]=0;
-					choice[1]=1;
-				}
-				if (spin==1) 
-				{	choice[0]=-1;
-					choice[1]=0;
-				}
+                //if the random spin site is located in layer 1
+                if (label <= sys_size)
+                {
+                    if (label % axis2 == 0)
+                    {
+                        row = (label / axis2) - 1;
+                        col = axis2 -1 ;
+                    }
+                    else
+                    {
+                        col = label % axis2 - 1;
+                        row = (label-col-1)/axis2;
+                    }
 
-				choice_ind = roll_coin(0,1);
-				newspin = choice[choice_ind];
- 
-				energy_diff =-nn_energy(ss1[b],row,col);
-				energy_diff -=D*spin*spin;
-				ss1[b][row][col]=newspin;
-				energy_diff +=nn_energy(ss1[b],row,col);
-				energy_diff +=D*newspin*newspin;
+                    spin = (*ss1[b])[row][col];
+                    if (spin==0) 
+                    {	choice[0]=-1;
+                        choice[1]=1;
+                    }
+                    if (spin==-1) 
+                    {	choice[0]=0;
+                        choice[1]=1;
+                    }
+                    if (spin==1) 
+                    {	choice[0]=-1;
+                        choice[1]=0;
+                    }
+
+                    choice_ind = roll_coin(0,1);
+                    newspin = choice[choice_ind];
+     
+                    energy_diff =-nn_energy(*ss1[b],row,col);
+                    energy_diff -=D*spin*spin;
+                    (*ss1[b])[row][col]=newspin;
+                    energy_diff +=nn_energy(*ss1[b],row,col);
+                    energy_diff +=D*newspin*newspin;
 
 
-				if (row < ell)
-				  { energy_diff -=nn_energy(ss2[b],row,col);
-					energy_diff -=D*spin*spin;
-					ss2[b][row][col]=newspin;
-					energy_diff +=nn_energy(ss2[b],row,col);
-					energy_diff +=D*newspin*newspin;
-			      }
+                    if (row < ell)
+                      { energy_diff -=nn_energy(*ss2[b],row,col);
+                        energy_diff -=D*spin*spin;
+                        (*ss2[b])[row][col]=newspin;
+                        energy_diff +=nn_energy(*ss2[b],row,col);
+                        energy_diff +=D*newspin*newspin;
+                      }
 
-				//Generate a random no. r such that 0 < r < 1
-				r = random_real(0, 1);
-				acc_ratio = exp(-1.0 * energy_diff *betas[b]);
+                    //Generate a random no. r such that 0 < r < 1
+                    r = random_real(0, 1);
+                    acc_ratio = exp(-1.0 * energy_diff *betas[b]);
 
-				//Spin flipped if r <= acceptance ratio
-				if (r <= acc_ratio)
-				{
+                    //Spin flipped if r <= acceptance ratio
+                    if (r <= acc_ratio)
+                    {
 
-						energy[b] += energy_diff;
-				}
-				else 
-				{   ss1[b][row][col] =spin;
-					if (row < ell)
-						ss2[b][row][col]=spin;
-				}
-			}
+                            energy[b] += energy_diff;
+                    }
+                    else 
+                    {   (*ss1[b])[row][col] =spin;
+                        if (row < ell)
+                            (*ss2[b])[row][col]=spin;
+                    }
+                }
 
-			//if the random spin site is located in layer 2
-			if (label > sys_size)
-			{
-				label -= sys_size;
+                //if the random spin site is located in layer 2
+                if (label > sys_size)
+                {
+                    label -= sys_size;
 
-				if (label % axis2 == 0)
-				{
-					row = (label / axis2) - 1;
-					col = axis2 -1 ;
-				}
-				else
-				{
-					col = label % axis2 - 1;
-					row = (label-col-1)/axis2;
-				}
+                    if (label % axis2 == 0)
+                    {
+                        row = (label / axis2) - 1;
+                        col = axis2 -1 ;
+                    }
+                    else
+                    {
+                        col = label % axis2 - 1;
+                        row = (label-col-1)/axis2;
+                    }
 
-        		spin = ss2[b][row][col];
-				 if (spin==0) 
-					{	choice[0]=-1;
-						choice[1]=1;
-					}
-				 if (spin==-1) 
-					{	choice[0]=0;
-						choice[1]=1;
-					}
-				 if (spin==1) 
-					{	choice[0]=-1;
-						choice[1]=0;
-					}
+                    spin = (*ss2[b])[row][col];
+                     if (spin==0) 
+                        {	choice[0]=-1;
+                            choice[1]=1;
+                        }
+                     if (spin==-1) 
+                        {	choice[0]=0;
+                            choice[1]=1;
+                        }
+                     if (spin==1) 
+                        {	choice[0]=-1;
+                            choice[1]=0;
+                        }
 
-				choice_ind = roll_coin(0,1);
-				newspin = choice[choice_ind];
- 
-				energy_diff =-nn_energy(ss2[b],row,col);
-				energy_diff -=D*spin*spin;
-				ss2[b][row][col]=newspin;
-				energy_diff +=nn_energy(ss2[b],row,col);
-				energy_diff +=D*newspin*newspin;
-
-
-				if (row < ell)
-				  { energy_diff -=nn_energy(ss1[b],row,col);
-					energy_diff -=D*spin*spin;
-					ss1[b][row][col]=newspin;
-					energy_diff +=nn_energy(ss1[b],row,col);
-					energy_diff +=D*newspin*newspin;
-			      }
+                    choice_ind = roll_coin(0,1);
+                    newspin = choice[choice_ind];
+     
+                    energy_diff =-nn_energy(*ss2[b],row,col);
+                    energy_diff -=D*spin*spin;
+                    (*ss2[b])[row][col]=newspin;
+                    energy_diff +=nn_energy(*ss2[b],row,col);
+                    energy_diff +=D*newspin*newspin;
 
 
-				//Generate a random no. r such that 0 < r < 1
-				r = random_real(0, 1);
-				acc_ratio = exp(-1.0 * energy_diff *betas[b]);
+                    if (row < ell)
+                      { energy_diff -=nn_energy(*ss1[b],row,col);
+                        energy_diff -=D*spin*spin;
+                        (*ss1[b])[row][col]=newspin;
+                        energy_diff +=nn_energy(*ss1[b],row,col);
+                        energy_diff +=D*newspin*newspin;
+                      }
 
-				//Spin flipped if r <= acceptance ratio
-				if (r <= acc_ratio)
-				{
 
-						energy[b] += energy_diff;
-				}
-				else 
-				{   ss2[b][row][col] =spin;
-					if (row < ell)
-						ss1[b][row][col]=spin;
-				}
-			}
-		}
+                    //Generate a random no. r such that 0 < r < 1
+                    r = random_real(0, 1);
+                    acc_ratio = exp(-1.0 * energy_diff *betas[b]);
 
-		//if (i> 1e5) en_sum += energy;
-		if (i> 1e5) ratio_sum += calc_ratio(ss1[b], ss2[b], betas[b], ell);
+                    //Spin flipped if r <= acceptance ratio
+                    if (r <= acc_ratio)
+                    {
+
+                            energy[b] += energy_diff;
+                    }
+                    else 
+                    {   (*ss2[b])[row][col] =spin;
+                        if (row < ell)
+                            (*ss1[b])[row][col]=spin;
+                    }
+                }
+            }
+            //if (i> 1e5) en_sum += energy;
+            if (meas[b] == 1){
+                if (i > N_meas){
+                    ratio_sum[b] += calc_ratio(*ss1[b], *ss2[b], betas[b], ell);
+                    if ((i % N_meas) == 0){
+                        (*fouts[b]) << ratio_sum[b] / N_meas << endl;
+                        ratio_sum[b] = 0;
+                    }
+                }
+            }
         }
-
         //fout << beta << '\t' << en_sum / N_mc << endl;
         //fratio << beta << '\t' << ratio_sum / N_mc << endl;
     }
 
     //Parallel tempering loop
-    for(int b=0;b,numB;b++){
-    }
+    //for(int b=0;b,numB;b++){
+    //}
 
 	return 0;
 }
