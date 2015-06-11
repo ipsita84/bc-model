@@ -45,7 +45,7 @@ unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
 
 //No.of Monte Carlo updates we want
-unsigned int N_mc = 1e6;
+unsigned int N_mc = 1e7;
 //No. of measurements per write to fil
 unsigned int N_meas = 1e5;
 
@@ -58,6 +58,7 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
 
 long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta, const int ell);
 void getBetas(vector<double>& betas, vector<int>& measure);
+void swapSims(int sim1, int sim2, vector<array_2d*>& ss1, vector<array_2d*>& ss2, vector<double>& energy);
 
 int main(int argc, char const * argv[])
 {
@@ -289,11 +290,25 @@ int main(int argc, char const * argv[])
         }
         //fout << beta << '\t' << en_sum / N_mc << endl;
         //fratio << beta << '\t' << ratio_sum / N_mc << endl;
+        //Parallel tempering loop
+        for(int b=0;b<(numB*numB);b++){
+            int t = roll_coin(0,numB-2);
+            double dB = betas[t+1] - betas[t];
+            double dE = energy[t+1] - energy[t];
+            r = random_real(0, 1);
+            acc_ratio = exp(dB*dE);
+            //std::cout << "r     " << r << std::endl;
+            //std::cout << "acc   " << acc_ratio << std::endl;
+            if(r < acc_ratio){
+                //std::cout << "e1 " << energy[t] << std::endl;
+                //std::cout << "e2 " << energy[t+1] << std::endl;
+                swapSims(t, t+1, ss1, ss2, energy);
+                //std::cout << "e1 " << energy[t] << std::endl;
+                //std::cout << "e2 " << energy[t+1] << std::endl;
+            }
+        }
     }
 
-    //Parallel tempering loop
-    //for(int b=0;b,numB;b++){
-    //}
 
 	return 0;
 }
@@ -617,4 +632,17 @@ void getBetas(vector<double>& betas, vector<int>& measure){
         betas.push_back(b);
         measure.push_back(m);
     }
+}
+
+// Swap simulations sim1 and sim2 after a successfull parallel tempering move
+void swapSims(int sim1, int sim2, vector<array_2d*>& ss1, vector<array_2d*>& ss2, vector<double>& energy){
+    array_2d* temp1 = ss1[sim1];
+    array_2d* temp2 = ss2[sim1];
+    ss1[sim1] = ss1[sim2];
+    ss2[sim1] = ss2[sim2];
+    ss1[sim2] = temp1;
+    ss2[sim2] = temp2;
+    double te = energy[sim1];
+    energy[sim1] = energy[sim2];
+    energy[sim2] = te;
 }
