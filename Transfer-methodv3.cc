@@ -45,7 +45,7 @@ unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
 
 //No.of Monte Carlo updates we want
-unsigned int N_mc = 1e7;
+unsigned int N_mc = 1e5;
 //No. of measurements per write to fil
 unsigned int N_meas = 1e5;
 
@@ -59,6 +59,7 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col);
 long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta, const int ell);
 void getBetas(vector<double>& betas, vector<int>& measure);
 void swapSims(int sim1, int sim2, vector<array_2d*>& ss1, vector<array_2d*>& ss2, vector<double>& energy);
+void clusterMove(array_2d& s1, array_2d& s2, const double beta, const int ell);
 
 int main(int argc, char const * argv[])
 {
@@ -276,6 +277,13 @@ int main(int argc, char const * argv[])
                             (*ss1[b])[row][col]=spin;
                     }
                 }
+            }
+            // We'll do axis 1 cluster moves, just as an attempt
+			for (unsigned int j = 1; j <=axis1; ++j){
+                std::cout << betas[b] << ", " << j << " ,Energy = " << energy[b] << std::endl;
+                clusterMove(*ss1[b], *ss2[b], betas[b], ell);
+                // Need to fully recalculate energy after these moves
+                energy[b] = energy_tot(*ss1[b]) + energy_tot(*ss2[b]);
             }
             //if (i> 1e5) en_sum += energy;
             if (meas[b] == 1){
@@ -645,4 +653,132 @@ void swapSims(int sim1, int sim2, vector<array_2d*>& ss1, vector<array_2d*>& ss2
     double te = energy[sim1];
     energy[sim1] = energy[sim2];
     energy[sim2] = te;
+}
+
+void addToCluster(int z, int sx, int sy, int l, double Padd, array_2d& f1, array_2d& f2, array_2d& s1, array_2d& s2, int ell){
+    // First check if the spin matches
+    // Then check if the spin is in the list already
+    //std::cout << "Trying to add: " << l << ", " << sx << ", " << sy << std::endl;
+    double r = 0.0;
+    if (l==0){
+        if(s1[sx][sy] != z) return;
+        if(f1[sx][sy] != 1) return;
+        r = random_real(0, 1);
+        if (r<Padd){
+            f1[sx][sy] = -1;
+            if(sx<ell){
+                f2[sx][sy] = -1;
+            }
+        }
+    }
+    else{
+        if(s2[sx][sy] != z) return;
+        if(f2[sx][sy] != 1) return;
+        r = random_real(0, 1);
+        if (r<Padd){
+            f2[sx][sy] = -1;
+            if(sx<ell){
+                f1[sx][sy] = -1;
+            }
+        }
+    }
+    if (r<Padd){
+        // Adding neighbors
+        if ((sx-1) < 0){
+            addToCluster(z, sx-1+axis1, sy, l, Padd, f1, f2, s1, s2, ell);
+        }
+        else{
+            addToCluster(z, sx-1, sy, l, Padd, f1, f2, s1, s2, ell);
+        }
+        if ((sx+1) >= axis1){
+            addToCluster(z, sx+1-axis1, sy, l, Padd, f1, f2, s1, s2, ell);
+        }
+        else{
+            addToCluster(z, sx+1, sy, l, Padd, f1, f2, s1, s2, ell);
+        }
+        if ((sy-1) < 0){
+            addToCluster(z, sx, sy-1+axis2, l, Padd, f1, f2, s1, s2, ell);
+        }
+        else{
+            addToCluster(z, sx, sy-1, l, Padd, f1, f2, s1, s2, ell);
+        }
+        if ((sy+1) >= axis2){
+            addToCluster(z, sx, sy+1-axis2, l, Padd, f1, f2, s1, s2, ell);
+        }
+        else{
+            addToCluster(z, sx, sy+1, l, Padd, f1, f2, s1, s2, ell);
+        }
+        if(sx<ell){
+            // Adding neighbors in the other layer
+            l = (l+1)%2;
+            if ((sx-1) < 0){
+                addToCluster(z, sx-1+axis1, sy, l, Padd, f1, f2, s1, s2, ell);
+            }
+            else{
+                addToCluster(z, sx-1, sy, l, Padd, f1, f2, s1, s2, ell);
+            }
+            if ((sx+1) >= axis1){
+                addToCluster(z, sx+1-axis1, sy, l, Padd, f1, f2, s1, s2, ell);
+            }
+            else{
+                addToCluster(z, sx+1, sy, l, Padd, f1, f2, s1, s2, ell);
+            }
+            if ((sy-1) < 0){
+                addToCluster(z, sx, sy-1+axis2, l, Padd, f1, f2, s1, s2, ell);
+            }
+            else{
+                addToCluster(z, sx, sy-1, l, Padd, f1, f2, s1, s2, ell);
+            }
+            if ((sy+1) >= axis2){
+                addToCluster(z, sx, sy+1-axis2, l, Padd, f1, f2, s1, s2, ell);
+            }
+            else{
+                addToCluster(z, sx, sy+1, l, Padd, f1, f2, s1, s2, ell);
+            }
+        }
+    }
+}
+
+// Cluster move that builds a Wolff cluster flipping S=1 <--> S=-1
+// Does not interact with S=0 states (can't solve EQs this way)
+void clusterMove(array_2d& s1, array_2d& s2, const double beta, const int ell){
+    // Choose a random spin
+    // If it is not S=1 or S=-1, finish
+    // If it is, build the cluster, adding neighbors with probability P_add if
+    // they match the spin configuration
+    // Once the cluster has stopped building, flip all the spins in the cluster
+    double Padd = 1 - exp(-2*beta*J);
+    int start_spin = roll_coin(0,axis1*axis2*2-1);
+    int start_layer = start_spin/(axis1*axis2);
+    start_spin = start_spin % (axis1*axis2);
+    int sx, sy;
+    sx = start_spin % axis1;
+    sy = start_spin / axis1;
+    int spin_conf = 0;
+    if (start_layer == 0){
+        if(s1[sx][sy] == 0) return;
+        spin_conf = s1[sx][sy];
+    }
+    else{
+        if(s2[sx][sy] == 0) return;
+        spin_conf = s2[sx][sy];
+    }
+	array_2d f1(boost::extents[axis1][axis2]);
+	array_2d f2(boost::extents[axis1][axis2]);
+	for (unsigned int i = 0; i < axis1; ++i)
+    {   for (unsigned int j = 0; j < axis2; ++j)
+        {
+            f1[i][j] = 1;
+            f2[i][j] = 1;
+        }
+    }
+    addToCluster(spin_conf, sx, sy, start_layer, Padd, f1, f2, s1, s2, ell);
+    // When this is done, f1 and f2 contain the spins to flip
+	for (unsigned int i = 0; i < axis1; ++i)
+    {   for (unsigned int j = 0; j < axis2; ++j)
+        {
+            s1[i][j] = s1[i][j]*f1[i][j];
+            s2[i][j] = s2[i][j]*f2[i][j];
+        }
+    }
 }
