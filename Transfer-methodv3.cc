@@ -45,7 +45,7 @@ unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
 
 //No.of Monte Carlo updates we want
-unsigned int N_mc = 1e5;
+unsigned int N_mc = 1e7;
 //No. of measurements per write to fil
 unsigned int N_meas = 1e5;
 
@@ -279,12 +279,14 @@ int main(int argc, char const * argv[])
                 }
             }
             // We'll do axis 1 cluster moves, just as an attempt
+            /*
 			for (unsigned int j = 1; j <=axis1; ++j){
                 std::cout << betas[b] << ", " << j << " ,Energy = " << energy[b] << std::endl;
                 clusterMove(*ss1[b], *ss2[b], betas[b], ell);
                 // Need to fully recalculate energy after these moves
                 energy[b] = energy_tot(*ss1[b]) + energy_tot(*ss2[b]);
             }
+            */
             //if (i> 1e5) en_sum += energy;
             if (meas[b] == 1){
                 if (i > N_meas){
@@ -565,9 +567,9 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
         tmat(2,2) = exp(-0.5*beta*(D*2 - J*(2 + np_bot1 - nm_bot1 + np_bot2 - nm_bot2)));
 
         t_bot *= tmat;
-        //coeff = t_bot.maxCoeff();
-        //tbot += log(coeff);
-        //t_bot /= coeff;
+        coeff = t_bot.maxCoeff();
+        tbot += log(coeff);
+        t_bot /= coeff;
 
         // Now the top layer in isolation
         // -1, -1 state
@@ -590,9 +592,9 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
         tmat(2,2) = exp(-0.5*beta*(D*2 - J*(2 + np_top1 - nm_top1 + np_top2 - nm_top2)));
 
         t_top *= tmat;
-        //coeff = t_top.maxCoeff();
-        //ttop += log(coeff);
-        //t_top /= coeff;
+        coeff = t_top.maxCoeff();
+        ttop += log(coeff);
+        t_top /= coeff;
 
         // Now the calculation of both layers connected
         // -1, -1 state
@@ -615,16 +617,16 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
         tmat(2,2) = exp(-0.5*beta*(D*4 - J*(4 + np_bot1 - nm_bot1 + np_bot2 - nm_bot2 + np_top1 - nm_top1 + np_top2 - nm_top2)));
 
         t_con *= tmat;
-        //coeff = t_con.maxCoeff();
-        //tcon += log(coeff);
-        //t_con /= coeff;
+        coeff = t_con.maxCoeff();
+        tcon += log(coeff);
+        t_con /= coeff;
     }
-    //ttop += log(t_top.trace());
-    //tbot += log(t_bot.trace());
-    //tcon += log(t_con.trace());
+    ttop += log(t_top.trace());
+    tbot += log(t_bot.trace());
+    tcon += log(t_con.trace());
 
-    //return exp(tcon - ttop - tbot);
-    return (t_con.trace() / (t_top.trace() * t_bot.trace()));
+    return exp(tcon - ttop - tbot);
+    //return (t_con.trace() / (t_top.trace() * t_bot.trace()));
 }
 
 // Reads betas.dat and reads in the set of betas as well as which we should
