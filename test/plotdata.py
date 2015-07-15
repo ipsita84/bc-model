@@ -4,9 +4,18 @@ MI2_L32_B0.82101
 """
 
 
-from glob import glob
-from matplotlib import pyplot as plt
 import numpy as np
+#import glob
+
+from matplotlib import use
+use('agg')
+
+import matplotlib.pyplot as plt
+plt.rc('text', usetex=True)
+
+from glob import glob
+#from matplotlib import pyplot as plt
+#import numpy as np
 
 def main():
     files = glob('MI*')
