@@ -4,7 +4,7 @@ Make the executable with the command
     make transfer
 this produces the executable named "transfer".
 
-Copy this file to a new directory, along with all the files in the directory "test".
+Copy this file to the directory "test"-- all other files are already there in the directory "test".
 
 To run the code, type
     python submit_jobs.py
