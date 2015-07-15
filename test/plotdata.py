@@ -47,7 +47,7 @@ def main():
         plt.xlim([0,0.5])
         plt.ylim([-0.5,0])
         plt.show()
-        plt.savefig('test.pdf')
+        plt.savefig('test_%f.pdf' % (1./float(b)) )
 
 if __name__ == "__main__":
     main()
