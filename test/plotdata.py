@@ -36,8 +36,6 @@ def main():
         plt.title('$T = %f$' % (1./float(b)))
         plt.xlabel('$x/L$')
         plt.ylabel('$I_2(x/L) - I_2(1/2)$')
-        plt.xlim([0,0.5])
-        plt.ylim([-1,0])
         #fun = lambda x: 0.7*np.log(np.sin(x*np.pi))
         fun = lambda x: 0.7*np.log(np.sin(x*np.pi))
         for s in sizes:
@@ -46,7 +44,10 @@ def main():
             plt.errorbar(xarray, d[:,0], d[:,1])
         xarray = np.array([i*1./100. for i in range(1,101)])
         plt.plot(xarray, fun(xarray))
+        plt.xlim([0,0.5])
+        plt.ylim([-0.5,0])
         plt.show()
+        plt.savefig('test.pdf')
 
 if __name__ == "__main__":
     main()
