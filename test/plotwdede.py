@@ -51,8 +51,7 @@ def main():
         plt.title('T = %f' % (1./float(b)))
         plt.xlabel('x/L')
         plt.ylabel('I_2(x/L) - I_2(1/2)')
-        #fun = lambda x: 0.7*np.log(np.sin(x*np.pi))
-        fun = lambda x: 0.7*np.log(np.sin(x*np.pi))
+       
         for s in sizes:
             d = np.loadtxt(fdict[(s,b)])
             xarray = np.array([i*1./s for i in range(s+1)])
