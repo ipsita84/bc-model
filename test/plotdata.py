@@ -41,7 +41,7 @@ def main():
         for s in sizes:
             d = np.loadtxt(fdict[(s,b)])
             xarray = np.array([i*1./s for i in range(s+1)])
-            plt.errorbar(xarray, d[:,0], d[:,1], label=str(s))
+            plt.errorbar(xarray, d[:,0], d[:,1], label='$L = {:n}$'.format(s))
 
 #       DedekindEta data
         ddkdata = np.loadtxt("dedekindeta_07.dat");
