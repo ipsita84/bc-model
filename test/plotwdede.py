@@ -29,7 +29,7 @@ def DedekindEta(tau):
 
 def JFunc(x, param):
     res = mpm.fp.fabs(DedekindEta(x*1j) * DedekindEta((1-x)*1j)
-           / DedekindEta(0.5j)**2)
+                      / DedekindEta(0.5j)**2)
     return (np.log(res) * param * 0.5)
 
 def main():
