@@ -33,7 +33,7 @@ def getAvg(filename):
 def main():
     file_dict = {}
     #sizes = [8, 16, 32]
-    sizes = [8, 16]
+    sizes = [6, 8,10,16, 20, 24]
     betas = []
     for fnames in iglob('L*/R*/ratio*'):
         t = fnames.split('/')[0]
