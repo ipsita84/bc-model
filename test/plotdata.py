@@ -48,7 +48,8 @@ def main():
 
         plt.xlim([0,0.5])
         plt.ylim([-0.5,0])
-        plt.legend(loc='upper left', handlelength=3, numpoints=1)
+#       plt.legend(loc='upper left', handlelength=3, numpoints=1)
+        plt.legend(loc='lower right', handlelength=3, numpoints=1)
         plt.show()
         plt.savefig('test_%f.pdf' % (1./float(b)) )
 
