@@ -60,13 +60,13 @@ def main():
 #       DedekindEta data
         xarray = np.array([(i*1./100) for i in range(1,100)])
         ypts   = np.array([JFunc(x, param=0.7) for x in xarray])
-        plt.plot(xarray, ypts, label="Exact curve")
+        plt.plot(xarray, ypts,'r--', label="Exact curve")
 
         plt.xlim([0,0.5])
         plt.ylim([-0.5,0])
-        plt.legend(loc='upper left', handlelength=3, numpoints=1)
+        plt.legend(loc='lower right', handlelength=3, numpoints=1)
         plt.show()
-        plt.savefig('test_%f.pdf' % (1./float(b)) )
+        plt.savefig('test1_%f.pdf' % (1./float(b)) )
 
 if __name__ == "__main__":
     main()

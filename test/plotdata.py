@@ -44,11 +44,8 @@ def main():
 
 #       DedekindEta data
         ddkdata = np.loadtxt("dedekindeta_07.dat");
-        plt.plot(ddkdata[:,0], ddkdata[:,1], 'r--',label="Exact curve")
-<<<<<<< HEAD
-=======
+        plt.plot(ddkdata[:,0], ddkdata[:,1], 'r--', label="Exact curve")
 
->>>>>>> 5b4a184eb509067753572342deab731f5ee56467
 
         plt.xlim([0,0.5])
         plt.ylim([-0.5,0])
