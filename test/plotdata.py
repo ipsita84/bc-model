@@ -41,11 +41,15 @@ def main():
         for s in sizes:
             d = np.loadtxt(fdict[(s,b)])
             xarray = np.array([i*1./s for i in range(s+1)])
-            plt.errorbar(xarray, d[:,0], d[:,1])
-        xarray = np.array([i*1./100. for i in range(1,101)])
-        plt.plot(xarray, fun(xarray))
+            plt.errorbar(xarray, d[:,0], d[:,1], label=str(s))
+
+#       DedekindEta data
+        ddkdata = np.loadtxt("dedekindeta_07.dat");
+        plt.plot(ddkdata[:,0], ddkdata[:,1], label="Exact curve")
+
         plt.xlim([0,0.5])
         plt.ylim([-0.5,0])
+        plt.legend(loc='upper left', handlelength=3, numpoints=1)
         plt.show()
         plt.savefig('test_%f.pdf' % (1./float(b)) )
 
