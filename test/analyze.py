@@ -74,10 +74,8 @@ def main():
                     v1 = S2e[S]**2 - S2e[f]**2 + S2e[r]**2
                     v2 = S2e[S]**2 - S2e[r]**2 + S2e[f]**2
                     MIe[f] = v1**0.5 if v1 < v2 else v2**0.5
-                    if MI[f] > MIMax:
-                        MIMax = MI[f]
-                    if MIe[f] > MIeMax:
-                        MIeMax = MIe[f]
+                MIMax = MI[S/2]
+                MIeMax = MIe[S/2]
                 # Rectify the error, shift the middle point to zero
                 for R in range(S+1):
                     MI[R] -= MIMax
