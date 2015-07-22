@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# vim: set ts=4 sw=4 tw=80:
+# vim: set et ts=4 sw=4 tw=80:
 
 from glob import glob
 import numpy as np
@@ -27,7 +27,8 @@ def main():
             d = np.loadtxt(fdict[(s,b)])
             r=int(s/2)
             for i in range(1,r):
-                resarr.append([s, i*1./s, d[-1,0], d[-1,1]])
+    	        for row in range(1,len(d[:,0])):
+                    resarr.append([s, i*1./s, d[row,0], d[row,1]])
 
     res = np.reshape(resarr,(-1, 4))
 # Write data to file using numpy.savetxt
