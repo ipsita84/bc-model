@@ -27,8 +27,7 @@ def main():
             d = np.loadtxt(fdict[(s,b)])
             r=int(s/2)
             for i in range(1,r):
-    	        for row in range(1,len(d[:,0])):
-                    resarr.append([s, i*1./s, d[row,0], d[row,1]])
+                resarr.append([s, i*1./s, d[i,0], d[i,1]])
 
     res = np.reshape(resarr,(-1, 4))
 # Write data to file using numpy.savetxt
