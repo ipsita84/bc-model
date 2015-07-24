@@ -19,7 +19,7 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
-#include "Eigen/Core"
+#include "../Eigen/Core"
 #include <vector>
 
 // gen is a variable name
@@ -63,9 +63,9 @@ void clusterMove(array_2d& s1, array_2d& s2, const double beta, const int ell);
 
 int main(int argc, char const * argv[])
 {
-	if (argc != 3)
+	if (argc != 4)
 	{
-		cout << "Expecting two inputs: axis1, ell."
+		cout << "Expecting three two inputs: axis1, ell, D"
 		     << endl << "Got " << argc - 1 << endl;
 		return 1;
 	}	
@@ -76,10 +76,11 @@ int main(int argc, char const * argv[])
 	{
 		axis1 = lexical_cast<unsigned int>(argv[1]);
 		ell = lexical_cast<unsigned int>(argv[2]);
+		D = lexical_cast<double>(argv[3]);
 	}
 	catch (const bad_lexical_cast & x)
 	{
-		cout << "Cannot convert input for axis1 to unsigned int" << endl;
+		cout << "Cannot convert input" << endl;
 		return 2;
 	}
 	
@@ -423,6 +424,7 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 
 // Method for calcuiating the ratio of partition functions using the transfer matrix method
 // ell contains the current number of spins in region A
+// Modified for open boundary conditions
 long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta, const int ell){
     Eigen::Matrix<double, 3,3> tmat; // Temporary matrix for filling and multiplying to results
     Eigen::Matrix<double, 3,3> t_top; // Spins in top layer
@@ -458,27 +460,32 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
     
     // ell will be from 0 to L-1 (it could be L, but since we are always adding spins that isn't necessary)
     // We are doing the transfer matrix over the spins in row=ell
-    int row_up = (ell+1)%axis1;
-    int row_down = (ell-1+axis1)%axis1;
+    int row_up = ell+1;
+    int row_down = ell-1;
 
-    for(int col=0; col<axis2; col++){
+    for(int col=0; col<(axis2-1); col++){
         if(col==0){
             nm_top1 = 0;
             np_top1 = 0;
             nm_bot1 = 0;
             np_bot1 = 0;
 
-            if(s1[row_up][col]==-1) nm_bot1++;
-            else if(s1[row_up][col]==1) np_bot1++;
+            if(row_up < axis1){
+                if(s1[row_up][col]==-1) nm_bot1++;
+                else if(s1[row_up][col]==1) np_bot1++;
+                
+                if(s2[row_up][col]==-1) nm_top1++;
+                else if(s2[row_up][col]==1) np_top1++;
+            }
 
-            if(s1[row_down][col]==-1) nm_bot1++;
-            else if(s1[row_down][col]==1) np_bot1++;
+            if(row_down >= 0){
+                if(s1[row_down][col]==-1) nm_bot1++;
+                else if(s1[row_down][col]==1) np_bot1++;
 
-            if(s2[row_up][col]==-1) nm_top1++;
-            else if(s2[row_up][col]==1) np_top1++;
+                if(s2[row_down][col]==-1) nm_top1++;
+                else if(s2[row_down][col]==1) np_top1++;
+            }
 
-            if(s2[row_down][col]==-1) nm_top1++;
-            else if(s2[row_down][col]==1) np_top1++;
         }
         else{
             nm_top1 = nm_top2;
@@ -494,17 +501,21 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
 
         int col2 = (col+1)%axis2;
 
-        if(s1[row_up][col2]==-1) nm_bot2++;
-        else if(s1[row_up][col2]==1) np_bot2++;
-
-        if(s1[row_down][col2]==-1) nm_bot2++;
-        else if(s1[row_down][col2]==1) np_bot2++;
-
-        if(s2[row_up][col2]==-1) nm_top2++;
-        else if(s2[row_up][col2]==1) np_top2++;
-
-        if(s2[row_down][col2]==-1) nm_top2++;
-        else if(s2[row_down][col2]==1) np_top2++;
+        if(row_up < axis1){
+            if(s1[row_up][col2]==-1) nm_bot2++;
+            else if(s1[row_up][col2]==1) np_bot2++;
+        
+            if(s2[row_up][col2]==-1) nm_top2++;
+            else if(s2[row_up][col2]==1) np_top2++;
+        }
+        
+        if(row_down >= 0){
+            if(s1[row_down][col2]==-1) nm_bot2++;
+            else if(s1[row_down][col2]==1) np_bot2++;
+        
+            if(s2[row_down][col2]==-1) nm_top2++;
+            else if(s2[row_down][col2]==1) np_top2++;
+        }
 
         // Now we know the number of adjacent spins (in the neighboring rows, ignoring the columns) for the spin in position col and col+1
         // We will split half of the interaction term to each spin, since for each bond in the column that we are doing the transfer matrix over
@@ -610,9 +621,9 @@ long double calc_ratio(const array_2d& s1, const array_2d& s2, const double beta
         tcon += log(coeff);
         t_con /= coeff;
     }
-    ttop += log(t_top.trace());
-    tbot += log(t_bot.trace());
-    tcon += log(t_con.trace());
+    ttop += log(t_top.sum());
+    tbot += log(t_bot.sum());
+    tcon += log(t_con.sum());
 
     return exp(tcon - ttop - tbot);
     //return (t_con.trace() / (t_top.trace() * t_bot.trace()));
