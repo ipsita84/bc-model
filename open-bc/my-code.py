@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 # vim: set et ts=4 sw=4 tw=80:
+# imported file name format: MI2_L30_B0.64935
+# header="L \ x \x/L \ I2shifted \errorbar")
 
 from glob import glob
 import numpy as np
@@ -10,6 +12,7 @@ def main():
     sizes = []
     betas = []
     fdict = {}
+    D=1.9
     for i in files:
         t = i.split('_')
         s = int(t[1][1:])
@@ -27,13 +30,14 @@ def main():
             d = np.loadtxt(fdict[(s,b)])
             r=int(s/2)
             for i in range(1,r):
-                resarr.append([s, i*1./s, d[i,0], d[i,1]])
+                resarr.append([s, i , i*1./s, d[i,0], d[i,1]])
 
-        res = np.reshape(resarr,(-1, 4))
+        res = np.reshape(resarr,(-1, 5))
         # Write data to file using numpy.savetxt
-        np.savetxt("tot_{:0.3f}.dat".format(T), res,
-        fmt='%3i % 15.4E % 15.4E % 15.4E')
+        #np.savetxt("tot{:0.3f}_{:0.3f}.dat".format(D,T),res,
+        #fmt='%3i %3i % 15.4E % 15.4E % 15.4E')
+        np.savetxt("tot_D%f_T%f.dat"% (D,T), res,
+        fmt='%3i %3i % 15.4E % 15.4E % 15.4E')
 
-# header="L\x/L\I2shifted\errorbar")
 if __name__ == "__main__":
     main()
