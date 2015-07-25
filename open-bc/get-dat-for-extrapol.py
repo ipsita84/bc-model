@@ -26,6 +26,7 @@ def in_list(val, arr=matvals):
                 return True
 
 def main():
+    D=1.9
     files = glob('tot*')
     Temps=[]
     fdict = {}
@@ -64,7 +65,7 @@ def main():
             len_res = len(res[:,0])
             #print(temp)
             if (len_res > 1):
-                np.savetxt("extra_%f_%s"%(comval,temp), 
+                np.savetxt("extra_x%f_D%f_T%s"%(comval,D,temp), 
 resarr,fmt='%3i %3i % 15.4E % 15.4E % 15.4E % 15.4E')
             
 
