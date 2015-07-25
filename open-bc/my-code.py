@@ -10,7 +10,6 @@ def main():
     sizes = []
     betas = []
     fdict = {}
-    resarr = [];
     for i in files:
         t = i.split('_')
         s = int(t[1][1:])
@@ -23,16 +22,17 @@ def main():
     
     for b in betas:
         T=1./float(b)
+        resarr = [];
         for s in sizes:
             d = np.loadtxt(fdict[(s,b)])
             r=int(s/2)
             for i in range(1,r):
                 resarr.append([s, i*1./s, d[i,0], d[i,1]])
 
-    res = np.reshape(resarr,(-1, 4))
-# Write data to file using numpy.savetxt
-    np.savetxt("tot.dat", res,
-               fmt='%3i % 15.4E % 15.4E % 15.4E')
+        res = np.reshape(resarr,(-1, 4))
+        # Write data to file using numpy.savetxt
+        np.savetxt("tot_{:0.3f}.dat".format(T), res,
+        fmt='%3i % 15.4E % 15.4E % 15.4E')
 
 # header="L\x/L\I2shifted\errorbar")
 if __name__ == "__main__":
