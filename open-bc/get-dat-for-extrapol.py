@@ -24,7 +24,7 @@ def main():
                 resarr.append([fdata[j,0], fdata[j,1], comval, 
                 1/fdata[j,0], fdata[j,3], fdata[j,4]])
                 
-        #len_resarr = len(resarr[:,2])
+        #len_resarr = len(resarr[:])
         #print(len_resarr)
         if (len_resarr > 1):
              res = np.reshape(resarr,(-1, 6))
