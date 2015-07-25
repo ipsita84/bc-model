@@ -38,7 +38,7 @@ def main():
         fdict[(temp)] = i
 
     for temp in Temps:
-        
+        matvals = []
         #print(temp)
         fdata = np.loadtxt(fdict[(temp)])
         val1  = fdata[:,2]
@@ -66,7 +66,7 @@ def main():
             if (len_res > 1):
                 np.savetxt("extra_%f_%s"%(comval,temp), 
 resarr,fmt='%3i %3i % 15.4E % 15.4E % 15.4E % 15.4E')
-            print(temp)
+            
 
 if __name__ == "__main__":
     main()
