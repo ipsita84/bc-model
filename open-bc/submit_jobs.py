@@ -22,7 +22,7 @@ def main():
     sizes = [8,12,16,20,24]
     Dval = 1.965
     jnum = 0
-    jmin = 2
+    jmin = 0
     jmax = 800
     for S in sizes:
         for R in range(S):
