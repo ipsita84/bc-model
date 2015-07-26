@@ -5,7 +5,7 @@
 //warming up system for first N_mc/10 loops
 //averaging energy for the next N_mc updates
 //incorporating SIMULATED ANNEALING
-//Previous result: kT/J=0.695, D/J=1.965 at critical point
+
 // axis2 = axis1
 //axis1 × axis1 square lattice, cut into 2 rectangles of
 //  sizes ell x axis1 & (axis1-ell) x axis1
@@ -37,9 +37,8 @@ typedef
 
 // Magnitude of parameters
 double J = 1.0;
-double D = 1.965;
-//double del_beta = 0.0035971223;
-//double del_beta = 0.1;
+double D = 1.9;
+
 unsigned int axis1 = 0;
 unsigned int axis2 = axis1;
 // above assigns length along each dimension of the 2d configuration
@@ -349,7 +348,7 @@ double random_real(int a, int b)
 
 //function to calculate total energy
 //for a given spin configuration
-//with periodic boundary conditions
+//with open boundary conditions
 
 double energy_tot(array_2d sitespin)
 {
@@ -367,18 +366,8 @@ double energy_tot(array_2d sitespin)
 		}
 	}
 
-	//periodic boundary conditions
-	for (unsigned int j = 0; j < axis2; ++j)
-		{	
-			energy +=-J * sitespin[axis1 - 1][j] * sitespin[0][j];
-			energy +=D*sitespin[axis1-1][j]*sitespin[axis1-1][j];
-		}
-
-	for (unsigned int i = 0; i < axis1; ++i)
-		{	
-			energy +=-J * sitespin[i][axis2-1] * sitespin[i][0];
-			energy +=D*sitespin[i][axis2-1]*sitespin[i][axis2-1];
-		}
+	//open boundary conditions -- end spins disconnected
+	
 
 	return energy;
 }
@@ -404,7 +393,7 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 
 	if (row == 0)
 	{
-		nn_en -=J*sitespin[0][col]*sitespin[axis1-1][col];
+		// open b.c. -- don't need this: nn_en -=J*sitespin[0][col]*sitespin[axis1-1][col];
 		nn_en -=J*sitespin[0][col]*sitespin[1][col];
 
 	}
@@ -412,13 +401,13 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 	if (row == axis1 - 1)
 	{
 		nn_en -=J*sitespin[axis1-1][col]*sitespin[axis1-2][col];
-		nn_en -=J*sitespin[axis1-1][col]*sitespin[0][col];
+		// open b.c. -- don't need this:nn_en -=J*sitespin[axis1-1][col]*sitespin[0][col];
 
 	}
 
 	if (col == 0)
 	{
-		nn_en -=J*sitespin[row][0]*sitespin[row][axis2-1];
+		// open b.c. -- don't need this:nn_en -=J*sitespin[row][0]*sitespin[row][axis2-1];
 		nn_en -=J*sitespin[row][0]*sitespin[row][1];
 
 	}
@@ -426,11 +415,12 @@ double nn_energy(array_2d sitespin, unsigned int row, unsigned int col)
 	if (col == axis2 - 1)
 	{
 		nn_en -=J*sitespin[row][axis2-1]*sitespin[row][axis2-2];
-		nn_en -=J*sitespin[row][axis2-1]*sitespin[row][0];
+		// open b.c. -- don't need this:nn_en -=J*sitespin[row][axis2-1]*sitespin[row][0];
 
 	}
 	return nn_en;
 }
+
 
 // Method for calcuiating the ratio of partition functions using the transfer matrix method
 // ell contains the current number of spins in region A
