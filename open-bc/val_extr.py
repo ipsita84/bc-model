@@ -21,7 +21,7 @@ fdict = {}
 for i in files:
     t = i.split('_')
     temp =t[3][1:]
-    print(temp)
+    #print(temp)
     ratio = float(t[1] [1:])
 #print(ratio)
 # T=float(temp[0:4])
@@ -31,9 +31,9 @@ for i in files:
         ratios.append(ratio)
     fdict[(ratio,temp)] = i
 
-    for temp in Temps:
+for temp in Temps:
+        resarr = []
         for r in ratios: 
-            resarr = []
             fdata = np.loadtxt(fdict[(ratio,temp)])
             val1  = fdata[:,2]
             l=len(val1)
@@ -45,11 +45,10 @@ for i in files:
 
             resarr.append( [r,popt[0], perr[0]] )
 
-            res = np.reshape(resarr, (-1,3))
+        res = np.reshape(resarr, (-1,3))
 #popt[0] = yintercept     
 #popt[1] = slope
-            np.savetxt("cval_D%f_T%s"%( D,temp), 
-                        resarr,fmt=' % 15.4E % 15.4E % 15.4E')
+        np.savetxt("cval_D%f_T%s"%( D,temp), resarr,fmt=' % 15.4E % 15.4E % 15.4E')
 
 
         #for i in range(0,l-1):
