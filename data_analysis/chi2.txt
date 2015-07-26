@@ -1,0 +1,4 @@
+cval_D1.900_T1.540002.dat Total chi^2 = 2930.221832
+cval_D1.900_T1.560014.dat Total chi^2 = 678.506050
+cval_D1.900_T1.580003.dat Total chi^2 = 11.853221
+cval_D1.900_T1.600000.dat Total chi^2 = 866.352007
