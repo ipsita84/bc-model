@@ -64,7 +64,7 @@ def main():
             res = np.reshape(resarr, (-1,6))
             len_res = len(res[:,0])
             #print(temp)
-            if (len_res > 1):
+            if (len_res > 2):
                 np.savetxt("extra_x%f_D%f_T%s"%(comval,D,temp), 
 resarr,fmt='%3i %3i % 15.4E % 15.4E % 15.4E % 15.4E')
             
