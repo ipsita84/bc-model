@@ -32,6 +32,11 @@ for i in files:
     fdict[('{0:.4f}'.format(ratio),temp)] = i
 
 for temp in Temps:
+        tt = temp.split('.')
+        temp1 = tt[0][0:]
+        temp2 = tt[1][0:]
+        T = float(temp1 + "." + temp2)
+        #print(T)
         resarr = []
         for r in ratios:
             fdata = np.loadtxt(fdict[('{0:.4f}'.format(r),temp)])
@@ -41,14 +46,14 @@ for temp in Temps:
             yarray = np.array(list(fdata[i,4] for i in range(0,l)))
             popt, pcov = curve_fit(func, xarray, yarray)
             perr = np.sqrt(np.diag(pcov)) # this is error estimate array for fitting params
-            print(r,popt[0], perr[0])
+            #print(r,popt[0], perr[0])
 
             resarr.append( [r,popt[0], perr[0]] )
 
         res = np.reshape(resarr, (-1,3))
 #popt[0] = yintercept     
 #popt[1] = slope
-        np.savetxt("cval_D%f_T%s"%( D,temp), resarr,fmt=' % 15.4E % 15.4E % 15.4E')
+        np.savetxt("cval_D{0:.3f}_T{1:.3f}.dat".format(D,T), resarr,fmt=' % 15.4E % 15.4E % 15.4E')
 
 
         #for i in range(0,l-1):
