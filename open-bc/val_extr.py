@@ -22,19 +22,19 @@ for i in files:
     t = i.split('_')
     temp =t[3][1:]
     #print(temp)
-    ratio = float(t[1] [1:])
+    ratio = float(t[1][1:])
 #print(ratio)
 # T=float(temp[0:4])
     if temp not in Temps:
         Temps.append(temp)
     if ratio not in ratios:
         ratios.append(ratio)
-    fdict[(ratio,temp)] = i
+    fdict[('{0:.4f}'.format(ratio),temp)] = i
 
 for temp in Temps:
         resarr = []
-        for r in ratios: 
-            fdata = np.loadtxt(fdict[(ratio,temp)])
+        for r in ratios:
+            fdata = np.loadtxt(fdict[('{0:.4f}'.format(r),temp)])
             val1  = fdata[:,2]
             l=len(val1)
             xarray = np.array(list(1/fdata[i,0] for i in range(0,l)))
