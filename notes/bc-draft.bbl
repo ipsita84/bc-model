@@ -1,0 +1,161 @@
+\begin{thebibliography}{19}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname bibnamefont\endcsname\relax
+  \def\bibnamefont#1{#1}\fi
+\expandafter\ifx\csname bibfnamefont\endcsname\relax
+  \def\bibfnamefont#1{#1}\fi
+\expandafter\ifx\csname citenamefont\endcsname\relax
+  \def\citenamefont#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{\citenamefont{Blume}(1966)}]{blume}
+\bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{Blume}},
+  \bibinfo{journal}{Phys. Rev.} \textbf{\bibinfo{volume}{141}},
+  \bibinfo{pages}{517} (\bibinfo{year}{1966}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRev.141.517}.
+
+\bibitem[{\citenamefont{Capel}(1966)}]{capel}
+\bibinfo{author}{\bibfnamefont{H.}~\bibnamefont{Capel}},
+  \bibinfo{journal}{Physics Letters} \textbf{\bibinfo{volume}{23}},
+  \bibinfo{pages}{327 } (\bibinfo{year}{1966}), ISSN \bibinfo{issn}{0031-9163},
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/0031916366900230}.
+
+\bibitem[{\citenamefont{Balbao and de~Felicio}(1987)}]{balbao}
+\bibinfo{author}{\bibfnamefont{D.~B.} \bibnamefont{Balbao}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{J.~R.~D.} \bibnamefont{de~Felicio}},
+  \bibinfo{journal}{Journal of Physics A: Mathematical and General}
+  \textbf{\bibinfo{volume}{20}}, \bibinfo{pages}{L207} (\bibinfo{year}{1987}),
+  \urlprefix\url{http://stacks.iop.org/0305-4470/20/i=4/a=005}.
+
+\bibitem[{\citenamefont{Burkhardt}(1976)}]{burk}
+\bibinfo{author}{\bibfnamefont{T.~W.} \bibnamefont{Burkhardt}},
+  \bibinfo{journal}{Phys. Rev. B} \textbf{\bibinfo{volume}{14}},
+  \bibinfo{pages}{1196} (\bibinfo{year}{1976}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.14.1196}.
+
+\bibitem[{\citenamefont{Berker and Wortis}(1976)}]{berker}
+\bibinfo{author}{\bibfnamefont{A.~N.} \bibnamefont{Berker}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{Wortis}},
+  \bibinfo{journal}{Phys. Rev. B} \textbf{\bibinfo{volume}{14}},
+  \bibinfo{pages}{4946} (\bibinfo{year}{1976}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.14.4946}.
+
+\bibitem[{\citenamefont{Burkhardt and Knops}(1977)}]{burk2}
+\bibinfo{author}{\bibfnamefont{T.~W.} \bibnamefont{Burkhardt}}
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{H.~J.~F.}
+  \bibnamefont{Knops}}, \bibinfo{journal}{Phys. Rev. B}
+  \textbf{\bibinfo{volume}{15}}, \bibinfo{pages}{1602} (\bibinfo{year}{1977}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.15.1602}.
+
+\bibitem[{\citenamefont{Ng and Barry}(1978)}]{ng}
+\bibinfo{author}{\bibfnamefont{W.~M.} \bibnamefont{Ng}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{J.~H.} \bibnamefont{Barry}},
+  \bibinfo{journal}{Phys. Rev. B} \textbf{\bibinfo{volume}{17}},
+  \bibinfo{pages}{3675} (\bibinfo{year}{1978}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.17.3675}.
+
+\bibitem[{\citenamefont{Jain and Landau}(1980)}]{landau}
+\bibinfo{author}{\bibfnamefont{A.~K.} \bibnamefont{Jain}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{D.~P.} \bibnamefont{Landau}},
+  \bibinfo{journal}{Phys. Rev. B} \textbf{\bibinfo{volume}{22}},
+  \bibinfo{pages}{445} (\bibinfo{year}{1980}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.22.445}.
+
+\bibitem[{\citenamefont{Selke and Yeomans}(1983)}]{selke}
+\bibinfo{author}{\bibfnamefont{W.}~\bibnamefont{Selke}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{J.}~\bibnamefont{Yeomans}},
+  \bibinfo{journal}{Journal of Physics A: Mathematical and General}
+  \textbf{\bibinfo{volume}{16}}, \bibinfo{pages}{2789} (\bibinfo{year}{1983}),
+  \urlprefix\url{http://stacks.iop.org/0305-4470/16/i=12/a=024}.
+
+\bibitem[{\citenamefont{Chakraborty}(1984)}]{chak}
+\bibinfo{author}{\bibfnamefont{K.~G.} \bibnamefont{Chakraborty}},
+  \bibinfo{journal}{Phys. Rev. B} \textbf{\bibinfo{volume}{29}},
+  \bibinfo{pages}{1454} (\bibinfo{year}{1984}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.29.1454}.
+
+\bibitem[{\citenamefont{Beale}(1986)}]{beale}
+\bibinfo{author}{\bibfnamefont{P.~D.} \bibnamefont{Beale}},
+  \bibinfo{journal}{Phys. Rev. B} \textbf{\bibinfo{volume}{33}},
+  \bibinfo{pages}{1717} (\bibinfo{year}{1986}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.33.1717}.
+
+\bibitem[{\citenamefont{Landau and Swendsen}(1986)}]{landau2}
+\bibinfo{author}{\bibfnamefont{D.~P.} \bibnamefont{Landau}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{R.~H.} \bibnamefont{Swendsen}},
+  \bibinfo{journal}{Phys. Rev. B} \textbf{\bibinfo{volume}{33}},
+  \bibinfo{pages}{7700} (\bibinfo{year}{1986}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.33.7700}.
+
+\bibitem[{\citenamefont{Tucker et~al.}(1998)\citenamefont{Tucker, Balcerzak,
+  Gzik, and Sukiennicki}}]{tucker}
+\bibinfo{author}{\bibfnamefont{J.}~\bibnamefont{Tucker}},
+  \bibinfo{author}{\bibfnamefont{T.}~\bibnamefont{Balcerzak}},
+  \bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{Gzik}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{A.}~\bibnamefont{Sukiennicki}},
+  \bibinfo{journal}{Journal of Magnetism and Magnetic Materials}
+  \textbf{\bibinfo{volume}{187}}, \bibinfo{pages}{381 } (\bibinfo{year}{1998}),
+  ISSN \bibinfo{issn}{0304-8853},
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/S030488539800136X}.
+
+\bibitem[{\citenamefont{Du et~al.}(2003)\citenamefont{Du, Yü, and Liu}}]{du}
+\bibinfo{author}{\bibfnamefont{A.}~\bibnamefont{Du}},
+  \bibinfo{author}{\bibfnamefont{Y.}~\bibnamefont{Yü}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{H.}~\bibnamefont{Liu}},
+  \bibinfo{journal}{Physica A: Statistical Mechanics and its Applications}
+  \textbf{\bibinfo{volume}{320}}, \bibinfo{pages}{387 } (\bibinfo{year}{2003}),
+  ISSN \bibinfo{issn}{0378-4371},
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/S0378437102016539}.
+
+\bibitem[{\citenamefont{Du et~al.}(2004)\citenamefont{Du, Liu, and Yü}}]{du2}
+\bibinfo{author}{\bibfnamefont{A.}~\bibnamefont{Du}},
+  \bibinfo{author}{\bibfnamefont{H.~J.} \bibnamefont{Liu}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{Y.~Q.} \bibnamefont{Yü}},
+  \bibinfo{journal}{physica status solidi (b)} \textbf{\bibinfo{volume}{241}},
+  \bibinfo{pages}{175} (\bibinfo{year}{2004}), ISSN \bibinfo{issn}{1521-3951},
+  \urlprefix\url{http://dx.doi.org/10.1002/pssb.200301904}.
+
+\bibitem[{\citenamefont{Silva et~al.}(2006)\citenamefont{Silva, Caparica, and
+  Plascak}}]{silva}
+\bibinfo{author}{\bibfnamefont{C.~J.} \bibnamefont{Silva}},
+  \bibinfo{author}{\bibfnamefont{A.~A.} \bibnamefont{Caparica}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{J.~A.}
+  \bibnamefont{Plascak}}, \bibinfo{journal}{Phys. Rev. E}
+  \textbf{\bibinfo{volume}{73}}, \bibinfo{pages}{036702}
+  (\bibinfo{year}{2006}),
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevE.73.036702}.
+
+\bibitem[{\citenamefont{Y\"uksel et~al.}(2009)\citenamefont{Y\"uksel, Akinci,
+  and Polat}}]{yusuf}
+\bibinfo{author}{\bibfnamefont{Y.}~\bibnamefont{Y\"uksel}},
+  \bibinfo{author}{\bibfnamefont{U.}~\bibnamefont{Akinci}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{H.}~\bibnamefont{Polat}},
+  \bibinfo{journal}{Physica Scripta} \textbf{\bibinfo{volume}{79}},
+  \bibinfo{pages}{045009} (\bibinfo{year}{2009}),
+  \urlprefix\url{http://stacks.iop.org/1402-4896/79/i=4/a=045009}.
+
+\bibitem[{\citenamefont{{Iaconis} et~al.}(2013)\citenamefont{{Iaconis},
+  {Inglis}, {Kallin}, and {Melko}}}]{stephen2013}
+\bibinfo{author}{\bibfnamefont{J.}~\bibnamefont{{Iaconis}}},
+  \bibinfo{author}{\bibfnamefont{S.}~\bibnamefont{{Inglis}}},
+  \bibinfo{author}{\bibfnamefont{A.~B.} \bibnamefont{{Kallin}}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{R.~G.}
+  \bibnamefont{{Melko}}}, \bibinfo{journal}{\prb}
+  \textbf{\bibinfo{volume}{87}}, \bibinfo{eid}{195134} (\bibinfo{year}{2013}),
+  \eprint{1210.2403}.
+
+\bibitem[{\citenamefont{{St{\'e}phan} et~al.}(2014)\citenamefont{{St{\'e}phan},
+  {Inglis}, {Fendley}, and {Melko}}}]{stephen2014}
+\bibinfo{author}{\bibfnamefont{J.-M.} \bibnamefont{{St{\'e}phan}}},
+  \bibinfo{author}{\bibfnamefont{S.}~\bibnamefont{{Inglis}}},
+  \bibinfo{author}{\bibfnamefont{P.}~\bibnamefont{{Fendley}}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{R.~G.}
+  \bibnamefont{{Melko}}}, \bibinfo{journal}{Physical Review Letters}
+  \textbf{\bibinfo{volume}{112}}, \bibinfo{eid}{127204} (\bibinfo{year}{2014}),
+  \eprint{1312.3954}.
+
+\end{thebibliography}
