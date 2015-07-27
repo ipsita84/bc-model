@@ -1,7 +1,7 @@
 """
 Correct temps for Blume Capel
-T_c/J = 0.609
-D/J = 1.965
+T_c/J = to be found
+D/J = to be found
 
 We will measure the ratio trick at T_c and 2T_c
 or Bc and Bc/2
