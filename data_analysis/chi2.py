@@ -16,7 +16,7 @@ class linFit():
             raise MyException("Out of domain, %f < %f" % (x, self.minx))
         if x>self.maxx:
             raise MyException("Out of domain, %f > %f" % (x, self.maxx))
-        for i in xrange(len(self.data)):
+        for i in range(len(self.data)):
             if x < self.data[i,0]:
                 x1 = self.data[i-1,0]
                 x2 = self.data[i,0]
@@ -43,9 +43,9 @@ def main():
     fout.close()
     res = np.array(res)
     fitf = lambda C,x,y: C[0]*(C[1] - x)**2 + C[2] - y
-    print res[1:]
+    print (res[1:])
     x = leastsq(fitf,[1.,1.58,10.],(res[1:,0],res[1:,1]))
-    print x
+    print (x)
         
 if __name__ == "__main__":
     main()
