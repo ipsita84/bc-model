@@ -33,7 +33,11 @@ def JFunc(x, param):
     return (np.log(res) * param * 0.5)
 
 def main():
+<<<<<<< HEAD
     D = 1.965
+=======
+    D = 1.9
+>>>>>>> cef3a894f59b9f9660f9741f902ada03c3ea1483
     files = glob('MI*')
     sizes = []
     betas = []
@@ -51,7 +55,11 @@ def main():
 
     for b in betas:
         plt.clf()
+<<<<<<< HEAD
         plt.title('D= %f, T = %f' % (D, 1./float(b)))
+=======
+        plt.title('D = %f, T = %f' % (D, 1./float(b)))
+>>>>>>> cef3a894f59b9f9660f9741f902ada03c3ea1483
         plt.xlabel('x/L')
         plt.ylabel('I_2(x/L) - I_2(1/2)')
 
