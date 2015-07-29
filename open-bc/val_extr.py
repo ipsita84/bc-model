@@ -12,8 +12,9 @@ from scipy.optimize import curve_fit
 def func(x, yintercept, slope):
     return slope*x + yintercept
 
+global D
 
-D=1.9
+#D=1.9
 files = glob('extra*')
 Temps=[]
 ratios=[]
@@ -23,6 +24,7 @@ for i in files:
     temp =t[3][1:]
     #print(temp)
     ratio = float(t[1][1:])
+    D = float(t[2][1:])
 #print(ratio)
 # T=float(temp[0:4])
     if temp not in Temps:
