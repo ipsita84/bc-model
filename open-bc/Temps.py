@@ -1,7 +1,7 @@
 """
 Correct temps for Blume Capel
-T_c/J = 0.609
-D/J = 1.965
+T_c/J = to be found
+D/J = to be found
 
 We will measure the ratio trick at T_c and 2T_c
 or Bc and Bc/2
@@ -19,6 +19,18 @@ def main():
     betas.append((0.5/0.79,1))
     betas.append((1./0.80,1))
     betas.append((0.5/0.80,1))
+    betas.append((1./0.789385,1))
+    betas.append((0.5/0.789385,1))
+    betas.append((1./0.5,1))
+    betas.append((0.5/0.5,1))
+    betas.append((1./0.6,1))
+    betas.append((0.5/0.6,1))
+    betas.append((1./0.7,1))
+    betas.append((0.5/0.7,1))
+    betas.append((1./0.8,1))
+    betas.append((0.5/0.8,1))
+    betas.append((1./0.9,1))
+    betas.append((0.5/0.9,1))
     betas.sort(key = lambda X:X[0])
     fout = open('betas.dat','w')
     for i in betas:

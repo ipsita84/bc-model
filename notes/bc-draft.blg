@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/TeX Live for SUSE Linux)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: bc-draft.aux
+The style file: apsrev.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: bc-draft.bib
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 19 entries,
+            3411 wiz_defined-function locations,
+            1303 strings with 13798 characters,
+and the built_in function-call counts, 12436 in all, are:
+= -- 752
+> -- 353
+< -- 55
++ -- 270
+- -- 86
+* -- 1706
+:= -- 1390
+add.period$ -- 19
+call.type$ -- 19
+change.case$ -- 76
+chr.to.int$ -- 19
+cite$ -- 19
+duplicate$ -- 1126
+empty$ -- 1065
+format.name$ -- 233
+if$ -- 2363
+int.to.chr$ -- 1
+int.to.str$ -- 20
+missing$ -- 176
+newline$ -- 72
+num.names$ -- 57
+pop$ -- 267
+preamble$ -- 1
+purify$ -- 76
+quote$ -- 0
+skip$ -- 455
+stack$ -- 0
+substring$ -- 435
+swap$ -- 886
+text.length$ -- 43
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 114
+warning$ -- 0
+while$ -- 55
+width$ -- 0
+write$ -- 227

@@ -1,0 +1,109 @@
+\documentclass[aps,prl,superscriptaddress,twocolumn]{revtex4}
+
+\pdfoutput=1
+
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{color}
+
+
+
+
+\newcommand{\note}[1]{%
+  \marginpar{\vskip-\baselineskip\raggedright\tiny\sffamily\hrule\smallskip%
+      {\color{red}#1}\par\smallskip\hrule}}
+
+\bibliographystyle{apsrev}
+
+\begin{document}
+
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\beqa}{\begin{eqnarray}}
+\newcommand{\eeqa}{\end{eqnarray}}
+\newcommand{\ben}{\begin{enumerate}}
+\newcommand{\een}{\end{enumerate}}
+\newcommand{\hs}{\hspace{0.5cm}}
+\newcommand{\vs}{\vspace{0.5cm}}
+
+\title{Detecting the Tricritical Point of the 2$d$ Blume--Capel Model}
+
+\author{Ipsita Mandal}
+\affiliation{Perimeter Institute for Theoretical Physics, Waterloo, Ontario N2L 2Y5, Canada}
+
+\author{Stephen Inglis}
+\affiliation{Department of Physics and Arnold Sommerfeld
+Center for Theoretical Physics, Ludwig-Maximilians-Universit\"at
+M\"unchen, D-80333 M\"unchen, Germany}
+
+
+\author{Roger G. Melko}
+\affiliation{Department of Physics and Astronomy, University of Waterloo, Ontario, N2L 3G1, Canada}
+\affiliation{Perimeter Institute for Theoretical Physics, Waterloo, Ontario N2L 2Y5, Canada}
+
+\date{\today}
+
+\begin{abstract}
+The spin-1 two-dimensional classical Blume-Capel model on a square lattice 
+is known to exhibit a tricritical point
+described by the tricritical Ising CFT with central charge $c=7/10$.
+By using the Renyi entropies via a replica-trick 
+on classical statistical mechanical systems,
+and calculating the Renyi Mutual Information (RMI) with Monte Carlo simulations,
+we can extract the value of the central charge at the tricritical point. We vary the parameters of
+Hamiltonian such that we obtain the tricritical point reproducing the
+correct central charge value predicted by CFT.
+\end{abstract}
+
+\maketitle
+
+{\em Introduction --}
+The Hamiltonian of the
+spin-1 Blume-Capel model on a two-dimensional square lattice \cite{blume,capel} is given by
+%%%%%%%%%%%%%
+\beq 
+H = -J \sum_{\langle i j \rangle} S^z_i S^z_j
++ D \sum_{\langle i  \rangle} ( S ^z_i) ^2   ,
+\label{bc-model}
+\eeq
+%%%%%%%%%%%%%%%
+where $S^z_i = \pm 1, 0 $.
+Though the model cannot be solved exactly, it has been shown to exhibit a tricritical point
+described by the tricritical Ising CFT with central charge $c=7/10$ \cite{balbao}. However, the position of the
+tricritical point can be found only numerically as this is not an exactly solvable model. There has been
+an extensive study in the literature using various sophisticated numerical techniques \cite{burk,berker,burk2,ng,landau,selke,chak,beale,landau2,tucker,du,du2,silva,yusuf} to pin down the values of the parameters $D , \, J$ and temperature $ T $ of the tricritical point. Here we endeavor to detect this
+phase transition point by using the quantity called Renyi Mutual Information (RMI), which is able to detect all correlations in a physical system, even those
+missed by traditional connected correlation functions. The method of detection of detection of classical phase transitions using RMI was developed by two of the authors \citep{stephen2013,stephen2014}.
+Since the RMI can detect finite-temperature critical points, and even identify their universality class,
+without the knowledge of an order parameter or other thermodynamic estimators, if we are sitting exactly at
+the tricirtical point, we expect to extract a value of $c$ from our numerical simulations, matching with the CFT value of $0.7$.
+
+
+{\em Results --}
+Varying $\left ( D_c /J , \, k T_c / J \right ) $ values, we find that the closest match to the actual $c=0.7$ is obtained for $\left ( D_c /J =1.9 , \, k T_c / J =0.79 \right ) $. We also provide a $\chi^2$ estimate, which clearly
+indicates this as the best fit.
+
+
+
+
+
+
+
+{\em Discussion --}
+
+
+
+
+{\em Acknowledgements --} We thank ... for enlightening discussions.  
+ This work was made possible by the computing facilities of SHARCNET. Support was provided 
+by NSERC of Canada (I.M. and R.G.M.), the Templeton
+Foundation (I.M.) and the National Science Foundation under Grant No. NSF PHY11-25915 (R.G.M). Research at the Perimeter Institute is supported, in
+part, by the Government of Canada through Industry Canada
+and by the Province of Ontario through the Ministry of
+Research and Information.
+
+
+\bibliography{bc-draft}
+
+\end{document}
