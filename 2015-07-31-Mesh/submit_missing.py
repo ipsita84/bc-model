@@ -25,12 +25,12 @@ def main():
     jnum = 0
     jnum2 = 0
     jmin = 1000
-    jmax = 2000
+    jmax = 1000
     for D in Dvals:
         for S in sizes:
             for R in range(S):
                 cur_path = folder_name % (D,S,R)
-                if jnum >= jmin and jnum < jmax and S != 14 and S != 28:
+                if jnum >= jmin and jnum2 < jmax and S != 14 and S != 28:
                     try:
                         os.makedirs(cur_path)
                     except:
