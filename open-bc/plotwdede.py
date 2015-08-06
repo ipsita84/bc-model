@@ -33,11 +33,7 @@ def JFunc(x, param):
     return (np.log(res) * param * 0.5)
 
 def main():
-<<<<<<< HEAD
-    D = 1.965
-=======
     D = 1.9
->>>>>>> cef3a894f59b9f9660f9741f902ada03c3ea1483
     files = glob('MI*')
     sizes = []
     betas = []
