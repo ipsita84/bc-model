@@ -26,11 +26,13 @@ def main():
         for beta in Bvals:
             data = np.loadtxt(filedict[(L,beta)])
             # Line L/2 contains the data we want
-            MI = data[L/2,0] + data[L/2,0] - data[L,0]
+            MI = 2*data[L/2,0] - data[L,0]
             MIe = data[L,1]
             middata.append([MI,MIe])
         middata = np.array(middata)
-        plt.errorbar(Bvals, middata[:,0]/L, middata[:,1]/L)
+        Bvals = np.array(Bvals)
+        plt.errorbar(1./Bvals, middata[:,0]/L, middata[:,1]/L, label="%d"%L)
+    plt.legend()
     plt.show()
 
 if __name__ == "__main__":
