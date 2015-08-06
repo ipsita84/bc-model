@@ -1,0 +1,20 @@
+from open-bc directory:
+
+1) for i in ./*/; do pushd ${i} ; test -e analyze.py && python ./analyze.py ; popd ; done
+
+2) for i in ./*/; do pushd ${i} ; test -e analyze.py && python3 ./my-code.py ; popd ; done
+
+3) for i in ./*/; do pushd ${i} ; test -e analyze.py && python3 ./get-dat-for-extrapol.py ; popd ; done
+
+4) for i in ./*/; do pushd ${i} ; test -e analyze.py && python3 ../val_extr.py ; popd ; done
+
+NOTE: it is ../  and not ./
+
+
+5) for i in test*/cval*; do cp ${i} ../data_analysis/`basename ${i}` ; done
+
+
+Now go to data_analysis directory and run chi2.py and fit_c.py to generate chi2.text and c.txt
+ with python3
+
+Note that I am using python3 for all except the analyze.py code
