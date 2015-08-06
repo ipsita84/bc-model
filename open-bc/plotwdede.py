@@ -15,12 +15,12 @@ import mpmath as mpm
 from matplotlib import use
 use('agg')
 
+import matplotlib as mpl
+
 import matplotlib.pyplot as plt
 # plt.rc('text', usetex=True)
 
 from glob import glob
-#from matplotlib import pyplot as plt
-#import numpy as np
 
 def DedekindEta(tau):
     q = mpm.exp(2 * np.pi * 1j * tau)
@@ -33,11 +33,8 @@ def JFunc(x, param):
     return (np.log(res) * param * 0.5)
 
 def main():
-<<<<<<< HEAD
-    D = 1.965
-=======
+    plt.style.use('ggplot')
     D = 1.9
->>>>>>> cef3a894f59b9f9660f9741f902ada03c3ea1483
     files = glob('MI*')
     sizes = []
     betas = []
@@ -51,37 +48,39 @@ def main():
         if b not in betas:
             betas.append(b)
         fdict[(s,b)] = i
-
+        sizes.sort()
 
     for b in betas:
+        colorlist = plt.cm.gist_rainbow(np.linspace(0, 1, len(sizes)))
+        colidx = 0
         plt.clf()
-<<<<<<< HEAD
-        plt.title('D= %f, T = %f' % (D, 1./float(b)))
-=======
+        plt.axes([0.1, 0.1, 0.7, 0.85])
         plt.title('D = %f, T = %f' % (D, 1./float(b)))
->>>>>>> cef3a894f59b9f9660f9741f902ada03c3ea1483
         plt.xlabel('x/L')
         plt.ylabel('I_2(x/L) - I_2(1/2)')
 
 #       DedekindEta data
         xarray = np.array([(i*1./100) for i in range(1,100)])
         ypts   = np.array([JFunc(x, param=0.7) for x in xarray])
-        plt.plot(xarray, ypts, linestyle='solid',
-          linewidth=2, label="CFT curve")
+        plt.plot(xarray, ypts, linestyle='solid', color='black',
+                 linewidth=2, label="CFT curve")
        
         for s in sizes:
             d = np.loadtxt(fdict[(s,b)])
             xarray = np.array([i*1./s for i in range(s+1)])
             #plt.errorbar(xarray, d[:,0], yerr=d[:,1],linestyle='none',
                            #marker='o', markersize=4, label='L = {:n}'.format(s))
-            plt.errorbar(xarray, d[:,0], yerr=d[:,1],linestyle='dotted', 
-                          marker='o',markersize=4, label='L = {:n}'.format(s))
-
-
+            plt.errorbar(xarray, d[:,0], yerr=d[:,1],linestyle='--', 
+                         marker='o',markersize=(2.0 + float(s-6)/6.0),
+                         color = colorlist[colidx % len(colorlist)],
+                         label='L = {:n}'.format(s))
+            colidx += 1
 
         plt.xlim([0,0.5])
         plt.ylim([-0.5,0])
-        plt.legend(loc='lower right', handlelength=3, numpoints=1)
+        plt.legend(loc='center right', bbox_to_anchor=(1.27, 0.5),
+                   handlelength=4, numpoints=1, fontsize='small',
+                   labelspacing=1.5)
         plt.show()
         plt.savefig('test1_%f.pdf' % (1./float(b)) )
 
