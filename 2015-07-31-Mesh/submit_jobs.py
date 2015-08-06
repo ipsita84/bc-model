@@ -23,21 +23,24 @@ def main():
     N_D = 30
     Dvals = [Dmin + (Dmax-Dmin)*i*1./N_D for i in xrange(N_D+1)]
     jnum = 0
-    jmin = 0
-    jmax = 1000
+    jnum2 = 0
+    jmin = 1000
+    jmax = 2000
     for D in Dvals:
         for S in sizes:
             for R in range(S):
-                cur_path = folder_name % (S,R)
-                if jnum >= jmin and jnum < jmax:
+                cur_path = folder_name % (D,S,R)
+                if jnum >= jmin and jnum < jmax and S != 14 and S != 28:
                     try:
                         os.makedirs(cur_path)
                     except:
                         pass
                     sp.call('cp ../../../transfer .', cwd=cur_path, shell=True)
                     sp.call('cp ../../../betas.dat .', cwd=cur_path, shell=True)
-                    sp.call('sqsub --mpp 500M -r 168h -e run%d.err -o run%d.out ./transfer %d %d %f' % (jnum, jnum, S, R, D), cwd=cur_path, shell=True)
+                    sp.call('sqsub --mpp 2500M -r 168h -e run%d.err -o run%d.out ./transfer %d %d %f' % (jnum, jnum, S, R, D), cwd=cur_path, shell=True)
                 jnum += 1
+                if S != 14 and S != 28:
+                    jnum2 += 1
 
 if __name__=="__main__":
     main()
