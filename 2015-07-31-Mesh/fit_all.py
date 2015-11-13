@@ -10,6 +10,7 @@ import operator
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib as mpl
 
 class MyException(Exception):
     pass
@@ -133,25 +134,31 @@ def main():
             #print ''
             Dres.append((D,xmin,ymin))
     Dres = np.array(Dres)
-    plt.plot(Dres[:,0],Dres[:,1])
-    plt.xlabel('D')
-    plt.ylabel('Beta_c')
-    plt.show()
-    plt.clf()
-    plt.plot(Dres[:,0],Dres[:,2])
-    plt.xlabel('D')
-    plt.ylabel('Chi^2')
-    plt.show()
-    #print cvals
-    #d = np.array(chivals)
-    #d = np.array(cvals)
-    #fig = plt.figure()
-    #ax = fig.add_subplot(111, projection='3d')
-    #ax.scatter(d[:,0],d[:,1],d[:,4])
-    #ax.scatter(d[:,0],d[:,1],d[:,4])
-    #ax.set_zlim3d((0,500))
-    #ax.set_ylim3d((0.35,0.42))
+    #plt.plot(Dres[:,0],Dres[:,1])
+    #plt.xlabel('D')
+    #plt.ylabel('Beta_c')
     #plt.show()
+    #plt.clf()
+    #plt.plot(Dres[:,0],Dres[:,2])
+    #plt.xlabel('D')
+    #plt.ylabel('Chi^2')
+    #plt.show()
+    #print cvals
+    d = np.array(chivals)
+    #d = np.array(cvals)
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    #ax.scatter(d[:,0],d[:,1],d[:,4])
+    #ax.scatter(d[:,0],d[:,1],d[:,4])
+    crange = (d[:,1]-d[0,1])/(d[-1,1] - d[0,1])
+    ax.scatter(d[:,0],d[:,1],d[:,2],c=crange,cmap=mpl.cm.spring)
+    ax.scatter(d[:,0],d[:,1],d[:,2],c=crange,cmap=mpl.cm.spring)
+    ax.set_zlim3d((0,2000))
+    ax.set_xlabel('$D$')
+    ax.set_ylabel('$\\beta$')
+    ax.set_zlabel('Total Chi^2')
+    #ax.set_ylim3d((0.35,0.42))
+    plt.show()
     #for i in fitres:
     #    print fitres[i][:,2]
     #results = np.array(sorted(results, key=operator.itemgetter(0,1)))
