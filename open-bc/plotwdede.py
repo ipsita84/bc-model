@@ -34,7 +34,7 @@ def JFunc(x, param):
 
 def main():
     plt.style.use('ggplot')
-    D = 1.9
+    D = 1.8754
     files = glob('MI*')
     sizes = []
     betas = []
@@ -55,9 +55,10 @@ def main():
         colidx = 0
         plt.clf()
         plt.axes([0.1, 0.1, 0.7, 0.85])
-        plt.title('D = %f, T = %f' % (D, 1./float(b)))
-        plt.xlabel('x/L')
-        plt.ylabel('I_2(x/L) - I_2(1/2)')
+        plt.title('$D_c$$/$$J$ = %.3f, $k$ $T_c$$/$$J$ = %.2f' 
+                  % (D, 0.5/float(b)), fontsize=18)
+        plt.xlabel('$x/L$',fontsize=18)
+        plt.ylabel('$I_2$($x/L$) - $I_2$($1/2$)', fontsize=18)
 
 #       DedekindEta data
         xarray = np.array([(i*1./100) for i in range(1,100)])
@@ -71,18 +72,21 @@ def main():
             #plt.errorbar(xarray, d[:,0], yerr=d[:,1],linestyle='none',
                            #marker='o', markersize=4, label='L = {:n}'.format(s))
             plt.errorbar(xarray, d[:,0], yerr=d[:,1],linestyle='--', 
-                         marker='o',markersize=(2.0 + float(s-6)/6.0),
+                         marker='o',markersize=(6.0 + float(s-6)/3.0),
                          color = colorlist[colidx % len(colorlist)],
                          label='L = {:n}'.format(s))
             colidx += 1
 
         plt.xlim([0,0.5])
+        plt.xticks([0,0.1,0.2,0.3,0.4,0.5], fontsize = 11)
         plt.ylim([-0.5,0])
-        plt.legend(loc='center right', bbox_to_anchor=(1.27, 0.5),
-                   handlelength=4, numpoints=1, fontsize='small',
+        plt.yticks([-0.5,-0.4,-0.3,-0.2,-0.1,0], fontsize = 11)
+        plt.legend(loc='center right', bbox_to_anchor=(1.28, 0.5),
+                   handlelength=4, numpoints=1, fontsize=10,
                    labelspacing=1.5)
         plt.show()
         plt.savefig('test1_%f.pdf' % (1./float(b)) )
 
 if __name__ == "__main__":
     main()
+
