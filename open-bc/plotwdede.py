@@ -57,8 +57,8 @@ def main():
         plt.axes([0.1, 0.1, 0.7, 0.85])
         plt.title('$D_c$$/$$J$ = %.3f, $k$ $T_c$$/$$J$ = %.2f' 
                   % (D, 0.5/float(b)), fontsize=18)
-        plt.xlabel('$x/L$',fontsize=18)
-        plt.ylabel('$I_2$($x/L$) - $I_2$($1/2$)', fontsize=18)
+        plt.xlabel('$\ell/L$',fontsize=18)
+        plt.ylabel('$I_2$($\ell,L$) - $I_2$($L/2,L$)', fontsize=18)
 
 #       DedekindEta data
         xarray = np.array([(i*1./100) for i in range(1,100)])
