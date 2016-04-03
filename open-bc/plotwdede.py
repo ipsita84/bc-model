@@ -74,7 +74,7 @@ def main():
             plt.errorbar(xarray, d[:,0], yerr=d[:,1],linestyle='--', 
                          marker='o',markersize=(6.0 + float(s-6)/3.0),
                          color = colorlist[colidx % len(colorlist)],
-                         label='L = {:n}'.format(s))
+                         label='$L$ = {:n}'.format(s))
             colidx += 1
 
         plt.xlim([0,0.5])
