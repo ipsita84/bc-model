@@ -78,9 +78,9 @@ def main():
             colidx += 1
 
         plt.xlim([0,0.5])
-        plt.xticks([0,0.1,0.2,0.3,0.4,0.5], fontsize = 11)
+        plt.xticks([0,0.1,0.2,0.3,0.4,0.5], fontsize = 18)
         plt.ylim([-0.5,0])
-        plt.yticks([-0.5,-0.4,-0.3,-0.2,-0.1,0], fontsize = 11)
+        plt.yticks([-0.5,-0.4,-0.3,-0.2,-0.1,0], fontsize = 18)
         #plt.legend(loc='center right', bbox_to_anchor=(1.28, 0.5),
                  #  handlelength=4, numpoints=1, fontsize=10,
                    #labelspacing=1.5)
