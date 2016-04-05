@@ -54,6 +54,7 @@ def main():
         colorlist = plt.cm.gist_rainbow(np.linspace(0, 1, len(sizes)))
         colidx = 0
         plt.clf()
+        plt.gcf().subplots_adjust(bottom=0.15)
         #plt.axes([0.1, 0.1, 0.7, 0.85])
         plt.title('$D_c$$/$$J$ = %.3f, $k$ $T_c$$/$$J$ = %.2f' 
                   % (D, 0.5/float(b)), fontsize=18)
